@@ -1,434 +1,382 @@
----
+# Planora
 
-# 1️⃣ User
-
-সিস্টেমের মূল authentication entity।
-
-### Fields
-
-| Field              | Type                | Description                                |
-| ------------------ | ------------------- | ------------------------------------------ |
-| id (PK)            | string              | ইউনিক ইউজার আইডি                           |
-| email              | string (unique)     | লগইন ইমেইল                                 |
-| password           | string              | hashed password                            |
-| role               | UserRole (enum)     | ADMIN / DOCTOR / PATIENT                   |
-| status             | UserStatus          | ACTIVE / BLOCKED                           |
-| needPasswordChange | boolean             | প্রথম লগইনের পর password change দরকার কিনা |
-| emailVerified      | boolean             | ইমেইল verify হয়েছে কিনা                    |
-| createdAt          | DateTime            | তৈরির সময়                                  |
-| updatedAt          | DateTime            | আপডেট সময়                                  |
-| deletedAt          | DateTime (nullable) | soft delete                                |
-
-### Relation
-
-- 🔗 User → Account (1:1)
-- 🔗 User → Admin (1:1 optional)
-- 🔗 User → Doctor (1:1 optional)
-- 🔗 User → Patient (1:1 optional)
-- 🔗 User → Verification (1:M)
-- 🔗 User → Session (1:M)
+**Planora** is a secure, JWT-protected web platform where **Admins and registered Users** can create, manage, and participate in events. Events can be **Public or Private** and may include **registration fees**.
 
 ---
 
-# 2️⃣ Account
+# Technology Stack
 
-Authentication provider information রাখে।
+## Frontend
 
-### Fields
+- Next.js
+- Tailwind CSS
 
-| Field        | Type     |
-| ------------ | -------- |
-| id (PK)      | string   |
-| userId (FK)  | string   |
-| providerId   | string   |
-| identifier   | string   |
-| accessToken  | string   |
-| refreshToken | string   |
-| idToken      | string   |
-| expiresAt    | DateTime |
-| createdAt    | DateTime |
-| updatedAt    | DateTime |
+## Backend
 
-### Relation
+- Node.js
+- Express.js
+- Prisma ORM
 
-- 🔗 Account.userId → User.id (Many account per user)
+## Database
 
----
+- PostgreSQL
 
-# 3️⃣ Admin
+## Authentication
 
-Admin specific data
+- Anything you prefer(Custom auth, Passport, Better auth etc)
 
-| Field         | Type     |
-| ------------- | -------- |
-| id (PK)       | string   |
-| userId (FK)   | string   |
-| name          | string   |
-| contactNumber | string   |
-| profilePhoto  | string   |
-| createdAt     | DateTime |
-| updatedAt     | DateTime |
+## Payment Integration
 
-Relation:
-
-- 🔗 Admin.userId → User.id (1:1)
+- Stripe/SSLCommerz or anything you prefer
 
 ---
 
-# 4️⃣ Doctor
+# Homepage Design
 
-ডাক্তারদের তথ্য
+## Navbar
 
-### Fields
+Links:
 
-| Field               | Type       |
-| ------------------- | ---------- |
-| id (PK)             | string     |
-| userId (FK)         | string     |
-| registrationNumber  | string     |
-| qualification       | string     |
-| designation         | string     |
-| currentWorkingPlace | string     |
-| experience          | int        |
-| appointmentFee      | float      |
-| gender              | Gender     |
-| bloodGroup          | BloodGroup |
-| profilePhoto        | string     |
-| rating              | float      |
-| createdAt           | DateTime   |
-| updatedAt           | DateTime   |
-| isDeleted           | boolean    |
-
-### Relation
-
-- 🔗 Doctor.userId → User.id
-- 🔗 Doctor → DoctorSpecialty (1:M)
-- 🔗 Doctor → DoctorSchedule (1:M)
-- 🔗 Doctor → Appointment (1:M)
-- 🔗 Doctor → Review (1:M)
+- Home
+- Events
+- Login / Signup
+- Dashboard
 
 ---
 
-# 5️⃣ Patient
+## Section 1: Hero Section
 
-রোগীর তথ্য
-
-| Field         | Type          |
-| ------------- | ------------- |
-| id (PK)       | string        |
-| userId (FK)   | string        |
-| name          | string        |
-| contactNumber | string        |
-| address       | string        |
-| dateOfBirth   | Date          |
-| gender        | Gender        |
-| bloodGroup    | BloodGroup    |
-| maritalStatus | MaritalStatus |
-| profilePhoto  | string        |
-| createdAt     | DateTime      |
-| updatedAt     | DateTime      |
-| isDeleted     | boolean       |
-
-### Relation
-
-- 🔗 Patient → Appointment (1:M)
-- 🔗 Patient → PatientHealthData (1:1)
-- 🔗 Patient → Review (1:M)
-- 🔗 Patient → MedicalReport (1:M)
+- Featured event selected by Admin
+- Event title
+- Event date
+- Short description
+- Join button
 
 ---
 
-# 6️⃣ PatientHealthData
+## Section 2: Upcoming Events Slider
 
-রোগীর মেডিকেল ব্যাকগ্রাউন্ড
+Slider showing **9 upcoming public events**
 
-| Field               | Type     |
-| ------------------- | -------- |
-| id (PK)             | string   |
-| patientId (FK)      | string   |
-| height              | float    |
-| weight              | float    |
-| hasAllergies        | boolean  |
-| hasDiabetes         | boolean  |
-| hasPastSurgeries    | boolean  |
-| smokingStatus       | boolean  |
-| dietaryPreference   | string   |
-| pregnancyStatus     | boolean  |
-| mentalHealthHistory | string   |
-| immunizationStatus  | string   |
-| recentDepression    | boolean  |
-| recentAnxiety       | boolean  |
-| createdAt           | DateTime |
-| updatedAt           | DateTime |
+Each card includes:
 
-Relation:
-
-- 🔗 patientId → Patient.id (1:1)
+- Event title
+- Date
+- Organizer
+- Fee badge (Free / Paid)
 
 ---
 
-# 7️⃣ Specialty
+## Section 3: Event Categories
 
-ডাক্তারদের স্পেশালাইজেশন
+Filters:
 
-| Field     | Type     |
-| --------- | -------- |
-| id (PK)   | string   |
-| title     | string   |
-| icon      | string   |
-| createdAt | DateTime |
-
-Relation:
-
-- 🔗 Specialty → DoctorSpecialty (1:M)
+- Public Free
+- Public Paid
+- Private Free
+- Private Paid
 
 ---
 
-# 8️⃣ DoctorSpecialty (Junction Table)
+## Section 4: Call To Action
 
-Many-to-Many relation Doctor ↔ Specialty
+Encourage users to:
 
-| Field            | Type   |
-| ---------------- | ------ |
-| id (PK)          | string |
-| doctorId (FK)    | string |
-| specialtyId (FK) | string |
-
-Relation:
-
-- 🔗 doctorId → Doctor.id
-- 🔗 specialtyId → Specialty.id
+- Create events
+- Join events
 
 ---
 
-# 9️⃣ Schedule
+## Footer
 
-Generic schedule
+Links:
 
-| Field     | Type     |
-| --------- | -------- |
-| id (PK)   | string   |
-| startDate | Date     |
-| endDate   | Date     |
-| startTime | Time     |
-| endTime   | Time     |
-| createdAt | DateTime |
+- About
+- Contact
+- Privacy Policy
 
 ---
 
-# 🔟 DoctorSchedule
+# Events Page
 
-Doctor এর availability
+### Search
 
-| Field           | Type    |
-| --------------- | ------- |
-| id (PK)         | string  |
-| doctorId (FK)   | string  |
-| scheduleId (FK) | string  |
-| isBooked        | boolean |
+Users can search events by:
 
-Relation:
+- Title
+- Organizer
 
-- 🔗 doctorId → Doctor.id
-- 🔗 scheduleId → Schedule.id
+### Filters
 
----
+- Public Free
+- Public Paid
+- Private Free
+- Private Paid
 
-# 1️⃣1️⃣ Appointment
+### Event Card
 
-| Field           | Type     |
-| --------------- | -------- |
-| id (PK)         | string   |
-| doctorId (FK)   | string   |
-| patientId (FK)  | string   |
-| scheduleId (FK) | string   |
-| status          | string   |
-| videoCallingId  | string   |
-| createdAt       | DateTime |
-| updatedAt       | DateTime |
+Displays:
 
-Relation:
-
-- 🔗 Doctor (M:1)
-- 🔗 Patient (M:1)
-- 🔗 Schedule (M:1)
-- 🔗 Appointment → Payment (1:1)
-- 🔗 Appointment → Prescription (1:1)
+- Title
+- Date
+- Organizer
+- Registration Fee
+- View Details button
 
 ---
 
-# 1️⃣2️⃣ Prescription
+# Event Details Page
 
-| Field              | Type     |
-| ------------------ | -------- |
-| id (PK)            | string   |
-| appointmentId (FK) | string   |
-| instruction        | string   |
-| followupDate       | Date     |
-| createdAt          | DateTime |
+Displays:
 
-Relation:
-
-- 🔗 appointmentId → Appointment.id
+- Title
+- Date and Time
+- Venue or Event Link
+- Description
+- Organizer
+- Registration Fee
 
 ---
 
-# 1️⃣3️⃣ MedicalReport
+## Action Buttons
 
-| Field          | Type     |
-| -------------- | -------- |
-| id (PK)        | string   |
-| patientId (FK) | string   |
-| reportName     | string   |
-| reportLink     | string   |
-| createdAt      | DateTime |
+### Free Public **Join**
 
-Relation:
+### Paid Public **Pay & Join**
 
-- 🔗 patientId → Patient.id
+### Free Private **Request to Join**
+
+### Paid Private **Pay & Request**
 
 ---
 
-# 1️⃣4️⃣ Review
+## Owner Controls
 
-| Field          | Type     |
-| -------------- | -------- |
-| id (PK)        | string   |
-| doctorId (FK)  | string   |
-| patientId (FK) | string   |
-| rating         | float    |
-| comment        | string   |
-| createdAt      | DateTime |
+Event owner can:
 
-Relation:
-
-- 🔗 Doctor (M:1)
-- 🔗 Patient (M:1)
+- Approve join requests
+- Reject join requests
+- Ban participants
+- Edit event
+- Delete event
 
 ---
 
-# 1️⃣5️⃣ Payment
+## Reviews and Ratings
 
-| Field              | Type          |
-| ------------------ | ------------- |
-| id (PK)            | string        |
-| appointmentId (FK) | string        |
-| amount             | float         |
-| transactionId      | string        |
-| paymentStatus      | PaymentStatus |
-| paymentGatewayData | JSON          |
-| createdAt          | DateTime      |
+Users can:
 
-Relation:
-
-- 🔗 appointmentId → Appointment.id (1:1)
+- Rate events
+- Write reviews
+- Edit reviews
+- Delete reviews (within review period)
 
 ---
 
-# 1️⃣6️⃣ Verification
+# Dashboard
 
-OTP / Email verification
+## Sidebar
 
-| Field       | Type     |
-| ----------- | -------- |
-| id (PK)     | string   |
-| userId (FK) | string   |
-| token       | string   |
-| expiresAt   | DateTime |
-| createdAt   | DateTime |
-
-Relation:
-
-- 🔗 userId → User.id
+- My Events
+- Pending Invitations
+- My Reviews
+- Settings
 
 ---
 
-# 1️⃣7️⃣ Session
+## My Events
 
-Login session tracking
+User can:
 
-| Field       | Type     |
-| ----------- | -------- |
-| id (PK)     | string   |
-| userId (FK) | string   |
-| ipAddress   | string   |
-| userAgent   | string   |
-| createdAt   | DateTime |
+- Create events
+- Update events
+- Delete events
+- View participants
+- Manage approvals
 
-Relation:
+### Event Creation Fields
 
-- 🔗 userId → User.id
-
----
-
-# 🔷 ENUM Types
-
-### UserRole
-
-- ADMIN
-- DOCTOR
-- PATIENT
-
-### UserStatus
-
-- ACTIVE
-- BLOCKED
-
-### Gender
-
-- MALE
-- FEMALE
-- OTHER
-
-### BloodGroup
-
-- A+, A-, B+, B-, O+, O-, AB+, AB-
-
-### MaritalStatus
-
-- SINGLE
-- MARRIED
-
-### PaymentStatus
-
-- PENDING
-- PAID
-- FAILED
+- Title
+- Date
+- Time
+- Venue
+- Description
+- Public / Private
+- Registration Fee
 
 ---
 
-# 🔶 Complete Relationship Summary (High-Level Architecture)
+## Invitations
 
-```
-User
- ├── Admin
- ├── Doctor
- │     ├── DoctorSpecialty ── Specialty
- │     ├── DoctorSchedule ── Schedule
- │     ├── Appointment ── Prescription
- │     │            └── Payment
- │     └── Review
- └── Patient
-       ├── PatientHealthData
-       ├── Appointment
-       ├── Review
-       └── MedicalReport
-```
+Users can:
+
+- Accept invitations
+- Decline invitations
+- Pay & Accept (for paid events)
 
 ---
 
-# 🎯 Overall Architecture Insight
+## Reviews
 
-এই ERD একটি **Role-Based Healthcare Management Backend System** যেখানে:
+Users can:
 
-- Authentication Layer (User, Account, Session, Verification)
-- Core Domain Layer (Doctor, Patient, Specialty)
-- Booking Layer (Schedule, DoctorSchedule, Appointment)
-- Clinical Layer (Prescription, MedicalReport)
-- Billing Layer (Payment)
-- Feedback Layer (Review)
+- View reviews
+- Edit reviews
+- Delete reviews
 
 ---
 
+## Settings
 
+Users can update:
 
+- Profile
+- Notifications
+
+---
+
+# Roles & Permissions
+
+## Admin
+
+Admin can:
+
+- Monitor all events
+- Monitor users
+- Delete inappropriate events
+- Delete user accounts
+
+---
+
+## User
+
+Users can:
+
+### Authentication
+
+- Register
+- Login
+
+### Event Management
+
+- Create events
+- Update events
+- Delete events
+
+### Event Discovery
+
+- Browse public events
+- Browse private events
+- Search events
+
+### Participation
+
+Free Public  
+→ Join instantly
+
+Paid Public  
+→ Payment required → Pending approval
+
+Private Free  
+→ Request to join → Pending approval
+
+Private Paid  
+→ Payment required → Pending approval
+
+---
+
+## Invitations
+
+Event hosts can invite users.
+
+Invitees see:
+
+- **Pay & Accept** button for paid events
+
+After payment:
+
+- Status becomes **Pending approval**
+
+---
+
+# Registration Fees & Payments
+
+- Event creators can set **registration fees**
+- Payment is processed using:
+  - SSLCommerz
+  - ShurjoPay
+
+Paid join attempts create **Pending requests** awaiting host approval.
+
+---
+
+# Core Functionality
+
+- Authentication using JWT
+- Event CRUD operations
+- Role-based access control
+- Event participation system
+- Invitation system
+- Payment workflow
+- Participant approval and banning
+- Event reviews and ratings
+
+---
+
+# Error Handling
+
+Includes:
+
+### Validation
+
+- Required field validation
+- Email validation
+- Fee validation
+
+### Loading States
+
+- API loading
+- Payment processing
+
+### Error Messages
+
+- Invalid login
+- Payment failure
+- Unauthorized access
+
+---
+
+# UI/UX Quality
+
+Requirements:
+
+- Responsive design
+- Mobile, tablet, and desktop support
+- Consistent Tailwind styling
+- Clean layout
+- Reusable UI components
+
+---
+
+# Commit History Requirement
+
+Minimum **20 meaningful commits** for both client and server
+
+---
+
+# Video Explanation
+
+Video length: **5–10 minutes**
+
+Demonstrate:
+
+1. User Registration
+2. Login
+3. Create Event
+4. Public Free Event Join
+5. Paid Event Payment
+6. Private Event Join Request
+7. Host Approval Process
+8. Dashboard Features
+9. Admin Moderation
+10. Event Reviews
