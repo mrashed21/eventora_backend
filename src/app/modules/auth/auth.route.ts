@@ -20,4 +20,4 @@ router.route("/");
 //     MerchantWithdrowController.delete,
 //   );
 
-export const AuthRoutes = router;
+export const auth_routes = router;

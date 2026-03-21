@@ -6,11 +6,11 @@
     "rootDir": "./src",
     "outDir": "./dist",
 
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"],
-      "@generated/*": ["prisma/generated/*"]
-    },
+    // "baseUrl": ".",
+    // "paths": {
+    //   "@/*": ["src/*"],
+    //   "@generated/*": ["prisma/generated/*"]
+    // },
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

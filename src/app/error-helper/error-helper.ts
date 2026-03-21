@@ -5,7 +5,7 @@ import {
   TGenericErrorResponse,
 } from "../interface/error.interface";
 
-export const handleZodError = (err: z.ZodError): TGenericErrorResponse => {
+export const handle_zod_error = (err: z.ZodError): TGenericErrorResponse => {
   const statusCode = status.BAD_REQUEST;
   const message = err.message;
   const errorSource: TErrorSource[] = [];

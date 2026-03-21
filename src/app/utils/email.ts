@@ -3,7 +3,7 @@ import status from "http-status";
 import nodemailder from "nodemailer";
 import path from "path";
 import { config } from "../config/config";
-import AppError from "../error-helper/app-error";
+import AppError from "../error-helper/api-error";
 
 const transporter = nodemailder.createTransport({
   host: config.EMAIL_SENDER_SMTP_HOST,

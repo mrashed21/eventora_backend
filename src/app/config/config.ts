@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import status from "http-status";
-import AppError from "../error-helper/app-error";
+import AppError from "../error-helper/api-error";
 dotenv.config();
 
 interface IConfig {
@@ -29,7 +29,7 @@ interface IConfig {
   SUPER_ADMIN_PASSWORD: string;
 }
 
-const requiredEnv = [
+const required_env = [
   "NODE_ENV",
   "PORT",
   "DATABASE_URL",
@@ -55,7 +55,7 @@ const requiredEnv = [
   "SUPER_ADMIN_PASSWORD",
 ];
 
-requiredEnv.forEach((variable) => {
+required_env.forEach((variable) => {
   if (!process.env[variable]) {
     throw new AppError(
       status.INTERNAL_SERVER_ERROR,
