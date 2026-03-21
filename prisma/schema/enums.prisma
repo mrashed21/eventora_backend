@@ -1,0 +1,17 @@
+enum user_role {
+    user
+    admin
+    super_admin
+}
+
+enum user_status {
+    active
+    in_active
+    banned
+    deleted
+}
+
+enum gender {
+    male
+    female
+}

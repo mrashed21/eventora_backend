@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
-// import status from "http-status";
-// import AppError from "../errorHelper/app-error";
+import status from "http-status";
+import AppError from "../error-helper/app-error";
 dotenv.config();
 
 interface IConfig {
@@ -29,40 +29,40 @@ interface IConfig {
   SUPER_ADMIN_PASSWORD: string;
 }
 
-// const requiredEnv = [
-//   "NODE_ENV",
-//   "PORT",
-//   "DATABASE_URL",
-//   "BETTER_AUTH_URL",
-//   "BETTER_AUTH_SECRET",
-//   "ACCESS_TOKEN_SECRET",
-//   "REFRESH_TOKEN_SECRET",
-//   "EMAIL_SENDER_SMTP_USER",
-//   "EMAIL_SENDER_SMT_PASS",
-//   "EMAIL_SENDER_SMTP_HOST",
-//   "EMAIL_SENDER_SMTP_PORT",
-//   "EMAIL_SENDER_SMTP_FROM",
-//   "GOOGLE_CLIENT_ID",
-//   "GOOGLE_CLIENT_SECRET",
-//   "GOOGLE_CALLBACK_URL",
-//   "FRONTEND_URL",
-//   "CLOUDINARY_CLOUD_NAME",
-//   "CLOUDINARY_API_KEY",
-//   "CLOUDINARY_API_SECRET",
-//   "STRIPE_SECRET_KEY",
-//   "STRIPE_WEBHOOK_SECRET",
-//   "SUPER_ADMIN_EMAIL",
-//   "SUPER_ADMIN_PASSWORD",
-// ];
+const requiredEnv = [
+  "NODE_ENV",
+  "PORT",
+  "DATABASE_URL",
+  "BETTER_AUTH_URL",
+  "BETTER_AUTH_SECRET",
+  "ACCESS_TOKEN_SECRET",
+  "REFRESH_TOKEN_SECRET",
+  "EMAIL_SENDER_SMTP_USER",
+  "EMAIL_SENDER_SMT_PASS",
+  "EMAIL_SENDER_SMTP_HOST",
+  "EMAIL_SENDER_SMTP_PORT",
+  "EMAIL_SENDER_SMTP_FROM",
+  "GOOGLE_CLIENT_ID",
+  "GOOGLE_CLIENT_SECRET",
+  "GOOGLE_CALLBACK_URL",
+  "FRONTEND_URL",
+  "CLOUDINARY_CLOUD_NAME",
+  "CLOUDINARY_API_KEY",
+  "CLOUDINARY_API_SECRET",
+  "STRIPE_SECRET_KEY",
+  "STRIPE_WEBHOOK_SECRET",
+  "SUPER_ADMIN_EMAIL",
+  "SUPER_ADMIN_PASSWORD",
+];
 
-// requiredEnv.forEach((variable) => {
-//   if (!process.env[variable]) {
-//     throw new AppError(
-//       status.INTERNAL_SERVER_ERROR,
-//       `Missing required environment variable: ${variable}`,
-//     );
-//   }
-// });
+requiredEnv.forEach((variable) => {
+  if (!process.env[variable]) {
+    throw new AppError(
+      status.INTERNAL_SERVER_ERROR,
+      `Missing required environment variable: ${variable}`,
+    );
+  }
+});
 
 export const config: IConfig = {
   NODE_ENV: process.env.NODE_ENV!,
