@@ -82,4 +82,56 @@ export const auth_service = {
       throw error;
     }
   },
+
+  //   ! login user
+  login: async (payload: Register_payload) => {
+    const { user_email, user_password } = payload;
+    const result = await auth.api.signInEmail({
+      body: {
+        email: user_email,
+        password: user_password,
+      },
+    });
+
+    if (!result.user) {
+      throw new api_error(status.BAD_REQUEST, "Failed to create user");
+    }
+
+    if (result.user.user_status === user_status.in_active) {
+      throw new api_error(status.BAD_REQUEST, "User is inactive");
+    }
+    if (
+      result.user.isDeleted ||
+      result.user.user_status === user_status.deleted
+    ) {
+      throw new api_error(status.BAD_REQUEST, "User is deleted");
+    }
+
+    const access_token = token_utils.create.access({
+      id: result.user.id,
+      user_email: result.user.email,
+      user_name: result.user.name,
+      user_role: result.user.user_role as user_role,
+      is_deleted: result.user.isDeleted,
+      user_status: result.user.user_status as user_status,
+      email_verified: result.user.emailVerified,
+    });
+
+    const refresh_token = token_utils.create.refresh({
+      id: result.user.id,
+      user_email: result.user.email,
+      user_name: result.user.name,
+      user_role: result.user.user_role as user_role,
+      is_deleted: result.user.isDeleted,
+      user_status: result.user.user_status as user_status,
+      email_verified: result.user.emailVerified,
+    });
+
+    return {
+      ...result.user,
+      token: result.token,
+      access_token,
+      refresh_token,
+    };
+  },
 };

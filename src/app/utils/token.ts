@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { config } from "../config/config";
-import { cookieUtils } from "./cookie";
+import { cookie_utils } from "./cookie";
 import { IJwtPayload, jwt_token } from "./jwt";
 
 export const token_utils = {
@@ -22,7 +22,7 @@ export const token_utils = {
   // ! set cookie
   setCookie: {
     access: (res: Response, token: string) => {
-      cookieUtils.setCookie(res, "accessToken", token, {
+      cookie_utils.set(res, "access_token", token, {
         httpOnly: true,
         secure: false, // production e true
         sameSite: "lax",
@@ -32,7 +32,7 @@ export const token_utils = {
     },
 
     refresh: (res: Response, token: string) => {
-      cookieUtils.setCookie(res, "refreshToken", token, {
+      cookie_utils.set(res, "refresh_token", token, {
         httpOnly: true,
         secure: false,
         sameSite: "lax",
@@ -42,7 +42,7 @@ export const token_utils = {
     },
 
     betterAuth: (res: Response, token: string) => {
-      cookieUtils.setCookie(res, "better-auth.session_token", token, {
+      cookie_utils.set(res, "better-auth.session_token", token, {
         httpOnly: true,
         secure: false,
         sameSite: "lax",
@@ -52,7 +52,6 @@ export const token_utils = {
     },
   },
 };
-
 
 /**
  * getAccessToken(payload) || token_utils.create.access(payload)

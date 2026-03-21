@@ -4,6 +4,7 @@ import { auth_controller } from "./auth.controller";
 const router = express.Router();
 
 router.route("/register").post(auth_controller.register);
+router.route("/login").post(auth_controller.login);
 
 // router
 //   .route("/merchant")
