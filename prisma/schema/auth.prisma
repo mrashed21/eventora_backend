@@ -1,19 +1,20 @@
 model User {
-    id                 String      @id @default(cuid())
+    id                 String        @id
     name               String
-    email              String      @unique
-    emailVerified      Boolean     @default(false) @map("email_verified")
-    userImage          String?     @map("user_image")
-    user_role          user_role   @default(user)
-    user_status        user_status @default(active)
-    needPasswordChange Boolean     @default(true) @map("need_password_change")
-    isDeleted          Boolean     @default(false) @map("is_deleted")
-    deletedAt          DateTime?   @map("deleted_at")
-    createdAt          DateTime    @default(now()) @map("created_at")
-    updatedAt          DateTime    @updatedAt @map("updated_at")
+    email              String        @unique
+    emailVerified      Boolean       @default(false) @map("email_verified")
+    userImage          String?       @map("user_image")
+    user_role          user_role     @default(user)
+    user_status        user_status   @default(active)
+    needPasswordChange Boolean       @default(true) @map("need_password_change")
+    isDeleted          Boolean       @default(false) @map("is_deleted")
+    deletedAt          DateTime?     @map("deleted_at")
+    createdAt          DateTime      @default(now()) @map("created_at")
+    updatedAt          DateTime      @updatedAt @map("updated_at")
     sessions           Session[]
     accounts           Account[]
     admin              Admin?
+    participants       Participants?
 
     @@map("user")
 }

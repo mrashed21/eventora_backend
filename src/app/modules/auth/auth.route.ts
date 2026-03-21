@@ -1,8 +1,9 @@
 import express from "express";
+import { auth_controller } from "./auth.controller";
 
 const router = express.Router();
 
-router.route("/");
+router.route("/register").post(auth_controller.register);
 
 // router
 //   .route("/merchant")

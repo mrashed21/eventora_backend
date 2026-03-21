@@ -5,6 +5,7 @@ import { user_role, user_status } from "../../generated/prisma/enums";
 import { config } from "../config/config";
 import { sendEmail } from "../utils/email";
 import { prisma } from "./prisma";
+import api_error from "../error-helper/api-error";
 
 export const auth = betterAuth({
   baseURL: config.BETTER_AUTH_URL,
@@ -84,6 +85,8 @@ export const auth = betterAuth({
             },
           });
 
+          console.log(user)
+          
           if (!user) {
             console.error(
               `User with email ${email} not found. Cannot send verification OTP.`,

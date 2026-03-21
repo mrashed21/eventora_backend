@@ -52,3 +52,12 @@ export const token_utils = {
     },
   },
 };
+
+
+/**
+ * getAccessToken(payload) || token_utils.create.access(payload)
+ * getRefreshToken(payload) || token_utils.create.refresh(payload)
+ * createAccessTokenAndSetCookie(res, token) || token_utils.setCookie.access(res, token)
+ * createRefreshTokenAndSetCookie(res, token) || token_utils.setCookie.refresh(res, token)
+ * createBetterAuthTokenAndSetCookie(res, token) || token_utils.setCookie.betterAuth(res, token)
+ */
