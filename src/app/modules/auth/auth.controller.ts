@@ -7,6 +7,7 @@ import {
 } from "../../custom/send-response";
 import { token_utils } from "../../utils/token";
 import { auth_service } from "./auth.service";
+import { get } from "node:http";
 
 export const auth_controller = {
   // ! register user
@@ -64,5 +65,14 @@ export const auth_controller = {
     });
   }),
 
-  //
+  // ! get me
+  get_me: catch_async(async (req: Request, res: Response) => {
+  const result = await auth_service.get_me(req.user.id);
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: "User fetched successfully",
+    data: result,
+  });
+}),
 };

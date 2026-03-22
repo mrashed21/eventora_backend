@@ -47,8 +47,6 @@ export const check_auth =
             res.setHeader("X-Session-Refresh", "true");
             res.setHeader("X-Session-Expires-At", expiresAt.toISOString());
             res.setHeader("X-Time-Remaining", timeRemaining.toString());
-
-            console.log("Session Expiring Soon!!");
           }
 
           if (
@@ -109,7 +107,6 @@ export const check_auth =
         access_token,
         config.ACCESS_TOKEN_SECRET,
       );
-
       if (!verifiedToken.success) {
         throw new api_error(
           status.UNAUTHORIZED,
@@ -119,7 +116,7 @@ export const check_auth =
 
       if (
         authRoles.length > 0 &&
-        !authRoles.includes(verifiedToken.data!.role as user_role)
+        !authRoles.includes(verifiedToken.data!.user_role as user_role)
       ) {
         throw new api_error(
           status.FORBIDDEN,

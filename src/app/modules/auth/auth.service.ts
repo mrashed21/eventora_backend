@@ -155,4 +155,24 @@ export const auth_service = {
       refresh_token,
     };
   },
+
+  // ! get me
+  get_me: async (user_id: string) => {
+    const isUserExists = await prisma.user.findUnique({
+      where: {
+        id: user_id,
+      },
+      include: {
+        participants: true,
+
+        admin: true,
+      },
+    });
+
+    if (!isUserExists) {
+      throw new api_error(status.NOT_FOUND, "User not found");
+    }
+
+    return isUserExists;
+  },
 };
