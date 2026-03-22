@@ -4,6 +4,8 @@ import express, { Application, Request, Response } from "express";
 import path from "path";
 import qs from "qs";
 import { config } from "./app/config/config";
+import { global_error_handler } from "./app/middleware/globar-error";
+import { not_found } from "./app/middleware/not-found";
 import router from "./app/routers/router";
 
 const app: Application = express();
@@ -55,7 +57,7 @@ app.get("/", async (req: Request, res: Response) => {
   });
 });
 
-// app.use(globarErrorHandler);
-// app.use(notFound);
+app.use(global_error_handler);
+app.use(not_found);
 
 export default app;

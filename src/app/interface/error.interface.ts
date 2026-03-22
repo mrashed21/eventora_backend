@@ -3,11 +3,11 @@ export interface TErrorSource {
   message: string;
 }
 
-export interface TGenericErrorResponse {
+export interface TErrorResponse {
   success: boolean;
   message: string;
   errorSource: TErrorSource[];
-  error: any;
+  error?: any;
   statusCode?: number;
   stack?: string;
 }

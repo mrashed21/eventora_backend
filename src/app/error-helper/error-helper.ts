@@ -1,11 +1,8 @@
 import status from "http-status";
 import { z } from "zod";
-import {
-  TErrorSource,
-  TGenericErrorResponse,
-} from "../interface/error.interface";
+import { TErrorResponse, TErrorSource } from "../interface/error.interface";
 
-export const handle_zod_error = (err: z.ZodError): TGenericErrorResponse => {
+export const handle_zod_error = (err: z.ZodError): TErrorResponse => {
   const statusCode = status.BAD_REQUEST;
   const message = err.message;
   const errorSource: TErrorSource[] = [];
@@ -16,7 +13,7 @@ export const handle_zod_error = (err: z.ZodError): TGenericErrorResponse => {
       message: issue.message,
     });
   });
-  const errorResponse: TGenericErrorResponse = {
+  const errorResponse: TErrorResponse = {
     success: false,
     message,
     errorSource,
