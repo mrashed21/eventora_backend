@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.route("/register").post(auth_controller.register);
 router.route("/login").post(auth_controller.login);
+router.route("/verify").post(auth_controller.verify);
 
 // router
 //   .route("/merchant")

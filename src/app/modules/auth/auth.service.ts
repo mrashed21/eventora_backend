@@ -83,6 +83,27 @@ export const auth_service = {
     }
   },
 
+  //! verify email
+  verify: async (email: string, otp: string) => {
+    const result = await auth.api.verifyEmailOTP({
+      body: {
+        email,
+        otp,
+      },
+    });
+
+    if (result.status && !result.user.emailVerified) {
+      await prisma.user.update({
+        where: {
+          email,
+        },
+        data: {
+          emailVerified: true,
+        },
+      });
+    }
+  },
+
   //   ! login user
   login: async (payload: Register_payload) => {
     const { user_email, user_password } = payload;

@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import status from "http-status";
 import catch_async from "../../custom/catch-async";
-import send_response from "../../custom/send-response";
+import {
+  default as send_response,
+  default as sendResponse,
+} from "../../custom/send-response";
 import { token_utils } from "../../utils/token";
 import { auth_service } from "./auth.service";
 
@@ -26,6 +29,19 @@ export const auth_controller = {
       },
     });
   }),
+
+  //! verify email
+  verify: catch_async(async (req: Request, res: Response) => {
+    const { email, otp } = req.body;
+    await auth_service.verify(email, otp);
+
+    sendResponse(res, {
+      statusCode: status.OK,
+      success: true,
+      message: "Email verified successfully",
+    });
+  }),
+
   // ! login user
   login: catch_async(async (req: Request, res: Response) => {
     const payload = req.body;
@@ -47,4 +63,6 @@ export const auth_controller = {
       },
     });
   }),
+
+  //
 };
