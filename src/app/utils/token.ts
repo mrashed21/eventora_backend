@@ -20,7 +20,7 @@ export const token_utils = {
   },
 
   // ! set cookie
-  setCookie: {
+  set_cookie: {
     access: (res: Response, token: string) => {
       cookie_utils.set(res, "access_token", token, {
         httpOnly: true,

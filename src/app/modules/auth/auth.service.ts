@@ -1,10 +1,13 @@
 import status from "http-status";
+import { JwtPayload } from "jsonwebtoken";
 import { user_role, user_status } from "../../../generated/prisma/enums";
+import { config } from "../../config/config";
 import api_error from "../../error-helper/api-error";
 import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
+import { jwt_token } from "../../utils/jwt";
 import { token_utils } from "../../utils/token";
-import { Register_payload } from "./auth.interface";
+import { IChangePasswordPayload, Register_payload } from "./auth.interface";
 
 export const auth_service = {
   // ! register user
@@ -92,7 +95,7 @@ export const auth_service = {
       },
     });
 
-    if (result.status && !result.user.emailVerified) {
+    if (result?.status && result?.user && !result.user.emailVerified) {
       await prisma.user.update({
         where: {
           email,
@@ -174,5 +177,281 @@ export const auth_service = {
     }
 
     return isUserExists;
+  },
+
+  // ! get new token
+  new_token: async (refresh_token: string, session_token: string) => {
+    const is_session_token = await prisma.session.findUnique({
+      where: {
+        token: session_token,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    if (!is_session_token) {
+      throw new api_error(status.UNAUTHORIZED, "Invalid session token");
+    }
+
+    const verified_refresh_token = jwt_token.verify.refresh(
+      refresh_token,
+      config.REFRESH_TOKEN_SECRET,
+    );
+
+    if (!verified_refresh_token.success && verified_refresh_token.error) {
+      throw new api_error(status.UNAUTHORIZED, "Invalid refresh token");
+    }
+
+    const data = verified_refresh_token.data as JwtPayload;
+
+    const new_access_token = token_utils.create.access({
+      id: data.id,
+      user_email: data.user.email,
+      user_name: data.user.name,
+      user_role: data.user.user_role as user_role,
+      is_deleted: data.user.isDeleted,
+      user_status: data.user.user_status as user_status,
+      email_verified: data.user.emailVerified,
+    });
+
+    const new_refresh_token = token_utils.create.refresh({
+      id: data.id,
+      user_email: data.user.email,
+      user_name: data.user.name,
+      user_role: data.user.user_role as user_role,
+      is_deleted: data.user.isDeleted,
+      user_status: data.user.user_status as user_status,
+      email_verified: data.user.emailVerified,
+    });
+
+    const { token } = await prisma.session.update({
+      where: {
+        token: session_token,
+      },
+      data: {
+        token: session_token,
+        expiresAt: new Date(Date.now() + 60 * 60 * 60 * 24 * 1000),
+        updatedAt: new Date(),
+      },
+    });
+
+    return {
+      access_token: new_access_token,
+      refresh_token: new_refresh_token,
+      session_token: token,
+    };
+  },
+
+  // ! logout user
+  logout: async (sessionToken: string) => {
+    const result = await auth.api.signOut({
+      headers: new Headers({
+        Authorization: `Bearer ${sessionToken}`,
+      }),
+    });
+    return result;
+  },
+
+  // ! change password
+  change_password: async (
+    payload: IChangePasswordPayload,
+    sessionToken: string,
+  ) => {
+    const session = await auth.api.getSession({
+      headers: new Headers({
+        Authorization: `Bearer ${sessionToken}`,
+      }),
+    });
+
+    if (!session) {
+      throw new api_error(status.UNAUTHORIZED, "Invalid session token");
+    }
+
+    const { current_password, new_password } = payload;
+
+    const result = await auth.api.changePassword({
+      body: {
+        currentPassword: current_password,
+        newPassword: new_password,
+        revokeOtherSessions: true,
+      },
+      headers: new Headers({
+        Authorization: `Bearer ${sessionToken}`,
+      }),
+    });
+
+    if (session.user.needPasswordChange) {
+      await prisma.user.update({
+        where: {
+          id: session.user.id,
+        },
+        data: {
+          needPasswordChange: false,
+        },
+      });
+    }
+
+    const new_access_token = token_utils.create.access({
+      id: session.user.id,
+      user_email: session.user.email,
+      user_name: session.user.name,
+      user_role: session.user.user_role as user_role,
+      is_deleted: session.user.isDeleted,
+      user_status: session.user.user_status as user_status,
+      email_verified: session.user.emailVerified,
+    });
+
+    const new_refresh_token = token_utils.create.refresh({
+      id: session.user.id,
+      user_email: session.user.email,
+      user_name: session.user.name,
+      user_role: session.user.user_role as user_role,
+      is_deleted: session.user.isDeleted,
+      user_status: session.user.user_status as user_status,
+      email_verified: session.user.emailVerified,
+    });
+
+    return {
+      ...result,
+      access_token: new_access_token,
+      refresh_token: new_refresh_token,
+    };
+  },
+
+  // ! forget password
+
+  forget_password: async (email: string) => {
+    const is_user_exist = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!is_user_exist) {
+      throw new api_error(status.NOT_FOUND, "User not found");
+    }
+
+    if (!is_user_exist.emailVerified) {
+      throw new api_error(status.BAD_REQUEST, "Email not verified");
+    }
+
+    if (
+      is_user_exist.isDeleted ||
+      is_user_exist.user_status === user_status.deleted
+    ) {
+      throw new api_error(status.NOT_FOUND, "User not found");
+    }
+
+    await auth.api.requestPasswordResetEmailOTP({
+      body: {
+        email,
+      },
+    });
+  },
+  // ! reset password
+  reset_password: async (email: string, otp: string, new_password: string) => {
+    const is_user_exist = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!is_user_exist) {
+      throw new api_error(status.NOT_FOUND, "User not found");
+    }
+
+    if (!is_user_exist.emailVerified) {
+      throw new api_error(status.BAD_REQUEST, "Email not verified");
+    }
+
+    if (
+      is_user_exist.isDeleted ||
+      is_user_exist.user_status === user_status.deleted
+    ) {
+      throw new api_error(status.NOT_FOUND, "User not found");
+    }
+
+    await auth.api.resetPasswordEmailOTP({
+      body: {
+        email,
+        otp,
+        password: new_password,
+      },
+    });
+
+    if (is_user_exist.needPasswordChange) {
+      await prisma.user.update({
+        where: {
+          id: is_user_exist.id,
+        },
+        data: {
+          needPasswordChange: false,
+        },
+      });
+    }
+
+    await prisma.session.deleteMany({
+      where: {
+        userId: is_user_exist.id,
+      },
+    });
+  },
+
+  // ! google login
+
+  google_login: async (session: Record<string, any>) => {
+    const is_participant = await prisma.participants.findUnique({
+      where: {
+        user_id: session.user.id,
+      },
+    });
+
+    if (!is_participant) {
+      await prisma.participants.create({
+        data: {
+          user_id: session.user.id,
+          user_name: session.user.name,
+          user_email: session.user.email,
+        },
+      });
+    }
+
+    // const access_token = token_utils.create.access({
+    //   id: session.user.id,
+    //   user_role: session.user.role,
+    //   user_name: session.user.name,
+    // });
+
+    // const refresh_token = token_utils.create.refresh({
+    //   userId: session.user.id,
+    //   role: session.user.role,
+    //   name: session.user.name,
+    // });
+
+    const access_token = token_utils.create.access({
+      id: session.user.id,
+      user_email: session.user.email,
+      user_name: session.user.name,
+      user_role: session.user.user_role as user_role,
+      is_deleted: session.user.isDeleted,
+      user_status: session.user.user_status as user_status,
+      email_verified: session.user.emailVerified,
+    });
+
+    const refresh_token = token_utils.create.refresh({
+      id: session.user.id,
+      user_email: session.user.email,
+      user_name: session.user.name,
+      user_role: session.user.user_role as user_role,
+      is_deleted: session.user.isDeleted,
+      user_status: session.user.user_status as user_status,
+      email_verified: session.user.emailVerified,
+    });
+
+    return {
+      access_token,
+      refresh_token,
+    };
   },
 };

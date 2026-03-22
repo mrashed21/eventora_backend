@@ -6,6 +6,7 @@ import { auth_controller } from "./auth.controller";
 const router = express.Router();
 
 router.route("/register").post(auth_controller.register);
+
 router.route("/login").post(auth_controller.login);
 router.route("/verify").post(auth_controller.verify);
 router
@@ -15,20 +16,31 @@ router
     auth_controller.get_me,
   );
 
-// router
-//   .route("/merchant")
-//   .get(
-//     verify("merchant_withdraw_show", "merchant"),
-//     MerchantWithdrowController.get,
-//   )
-//   .patch(
-//     verify("merchant_withdraw_update", "merchant"),
-//     FileUploadHelper.ImageUpload.any(),
-//     MerchantWithdrowController.update,
-//   )
-//   .delete(
-//     verify("merchant_withdraw_delete", "merchant"),
-//     MerchantWithdrowController.delete,
-//   );
+router.route("/new_token").post(
+  // check_auth(user_role.admin, user_role.super_admin, user_role.user),
+  auth_controller.new_token,
+);
+router
+  .route("/logout")
+  .post(
+    check_auth(user_role.admin, user_role.super_admin, user_role.user),
+    auth_controller.logout,
+  );
+
+router
+  .route("/change_password")
+  .post(
+    check_auth(user_role.admin, user_role.super_admin, user_role.user),
+    auth_controller.change_password,
+  );
+
+router.route("/forget_password").post(auth_controller.forget_password);
+router.route("/reset_password").post(auth_controller.reset_password);
+
+router.route("/login/google").get(auth_controller.google_login);
+
+router.route("/google/success").get(auth_controller.google_login_success);
+
+router.route("/oauth/error").get(auth_controller.handle_oAuth_error);
 
 export const auth_routes = router;
