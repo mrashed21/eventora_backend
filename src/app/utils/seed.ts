@@ -3,26 +3,26 @@ import { config } from "../config/config";
 import { auth } from "../lib/auth";
 import { prisma } from "../lib/prisma";
 
-export const seedSuperAdmin = async () => {
+export const seed_super_admin = async () => {
   try {
-    const isSuperAdminExist = await prisma.user.findFirst({
+    const is_exist = await prisma.user.findFirst({
       where: {
         user_role: user_role.super_admin,
       },
     });
 
-    if (isSuperAdminExist) {
+    if (is_exist) {
       console.log("Super admin already exists. Skipping seeding super admin.");
       return;
     }
 
-    const superAdminUser = await auth.api.signUpEmail({
+    const super_admin_user = await auth.api.signUpEmail({
       body: {
         email: config.SUPER_ADMIN_EMAIL,
         password: config.SUPER_ADMIN_PASSWORD,
         name: "Super Admin",
         user_role: user_role.super_admin,
-        needPasswordChange: false,
+        need_password_change: false,
         rememberMe: false,
       },
     });
@@ -30,7 +30,7 @@ export const seedSuperAdmin = async () => {
     await prisma.$transaction(async (tx) => {
       await tx.user.update({
         where: {
-          id: superAdminUser.user.id,
+          id: super_admin_user.user.id,
         },
         data: {
           emailVerified: true,
@@ -39,14 +39,15 @@ export const seedSuperAdmin = async () => {
 
       await tx.admin.create({
         data: {
-          userId: superAdminUser.user.id,
+          user_id: super_admin_user.user.id,
           admin_name: "Super Admin",
           admin_email: config.SUPER_ADMIN_EMAIL,
+          admin_role: user_role.super_admin,
         },
       });
     });
 
-    const superAdmin = await prisma.admin.findFirst({
+    const super_admin = await prisma.admin.findFirst({
       where: {
         admin_email: config.SUPER_ADMIN_EMAIL,
       },
@@ -55,7 +56,7 @@ export const seedSuperAdmin = async () => {
       },
     });
 
-    console.log("Super Admin Created ", superAdmin);
+    console.log("Super Admin Created ", super_admin);
   } catch (error) {
     console.error("Error seeding super admin: ", error);
     await prisma.user.delete({

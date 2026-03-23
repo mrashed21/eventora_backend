@@ -10,7 +10,10 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(admin_controller.get_admin)
+  .get(
+    check_auth(user_role.admin, user_role.super_admin),
+    admin_controller.get_admin,
+  )
   .post(
     check_auth(user_role.admin, user_role.super_admin),
     validate_request(create_admin_schema),

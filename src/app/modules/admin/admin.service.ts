@@ -9,21 +9,21 @@ export const admin_service = {
   // ! create admin
   create: async (payload: any) => {
     const admin_exists = await prisma.user.findUnique({
-      where: { email: payload.email },
+      where: { email: payload.admin_email },
     });
 
     if (admin_exists) {
       throw new api_error(status.BAD_REQUEST, "Admin already exists");
     }
 
-    const { password, role, ...adminData } = payload;
-
     const userData = await auth.api.signUpEmail({
       body: {
-        ...adminData,
-        password,
-        role,
-        needPasswordChange: true,
+        name: payload.admin_name,
+        email: payload.admin_email,
+        image: payload.profile_photo,
+        password: payload.admin_password,
+        user_role: payload.admin_role,
+        need_password_change: true,
       },
     });
 
@@ -31,7 +31,8 @@ export const admin_service = {
       const admin = await prisma.admin.create({
         data: {
           user_id: userData.user.id,
-          ...adminData,
+          admin_role: payload.admin_role,
+          ...payload,
         },
       });
 

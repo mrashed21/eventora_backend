@@ -16,7 +16,7 @@ CREATE TABLE "user" (
     "image" TEXT,
     "role" "UserRole" NOT NULL DEFAULT 'user',
     "status" "UserStatus" NOT NULL DEFAULT 'active',
-    "needPasswordChange" BOOLEAN NOT NULL DEFAULT true,
+    "need_password_change" BOOLEAN NOT NULL DEFAULT true,
     "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "deletedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

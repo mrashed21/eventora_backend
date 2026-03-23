@@ -281,13 +281,13 @@ export const auth_service = {
       }),
     });
 
-    if (session.user.needPasswordChange) {
+    if (session.user.need_password_change) {
       await prisma.user.update({
         where: {
           id: session.user.id,
         },
         data: {
-          needPasswordChange: false,
+          need_password_change: false,
         },
       });
     }
@@ -380,13 +380,13 @@ export const auth_service = {
       },
     });
 
-    if (is_user_exist.needPasswordChange) {
+    if (is_user_exist.need_password_change) {
       await prisma.user.update({
         where: {
           id: is_user_exist.id,
         },
         data: {
-          needPasswordChange: false,
+          need_password_change: false,
         },
       });
     }

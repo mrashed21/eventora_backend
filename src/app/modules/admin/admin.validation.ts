@@ -5,7 +5,7 @@ export const create_admin_schema = z.object({
   admin_email: z
     .string("Email must be a string")
     .email("Email must be a valid email"),
-  password: z
+  admin_password: z
     .string("Password must be a string")
     .min(6, "Password must be at least 6 characters"),
   admin_role: z.enum(["SUPER_ADMIN", "ADMIN"]),
