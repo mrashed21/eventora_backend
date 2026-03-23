@@ -1,15 +1,16 @@
 model Admin {
-  id             String    @id @default(uuid(7))
+  id             String     @id @default(uuid(7))
   admin_name     String
-  admin_email    String    @unique
+  admin_email    String     @unique
   profile_photo  String?
   contact_number String?
-  is_deleted     Boolean   @default(false)
-  created_at     DateTime  @default(now())
-  updated_at     DateTime  @updatedAt
+  admin_role     admin_role @default(admin)
+  is_deleted     Boolean    @default(false)
+  created_at     DateTime   @default(now())
+  updated_at     DateTime   @updatedAt
   deleted_at     DateTime?
-  userId         String    @unique
-  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user_id        String     @unique
+  user           User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([admin_email])
   @@index([is_deleted])

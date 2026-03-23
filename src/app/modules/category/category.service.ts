@@ -95,7 +95,7 @@ export const category_service = {
 
   // ! admin
   get_admin: async (query: any) => {
-    const { searchTerm, page, limit } = query;
+    const { search_term, page, limit } = query;
 
     const {
       skip,
@@ -107,7 +107,7 @@ export const category_service = {
       limit,
     });
 
-    const searchCondition = buildSearchConditions(searchTerm, [
+    const searchCondition = buildSearchConditions(search_term, [
       "category_name",
       "category_description",
     ]);

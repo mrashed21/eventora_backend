@@ -4,6 +4,10 @@ enum user_role {
   super_admin
 }
 
+enum admin_role {
+  super_admin
+  admin
+}
 enum user_status {
   active
   in_active
