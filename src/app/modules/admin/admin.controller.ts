@@ -7,7 +7,10 @@ import { admin_service } from "./admin.service";
 export const admin_controller = {
   // ! create admin
   create: catch_async(async (req: Request, res: Response) => {
-    const payload = req.body;
+    const payload = {
+      ...req.body,
+      profile_photo: req.file?.path,
+    };
     const result = await admin_service.create(payload);
     send_response(res, {
       statusCode: status.CREATED,

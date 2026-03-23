@@ -16,6 +16,8 @@ export const admin_service = {
       throw new api_error(status.BAD_REQUEST, "Admin already exists");
     }
 
+    const { admin_password, ...adminData } = payload;
+
     const userData = await auth.api.signUpEmail({
       body: {
         name: payload.admin_name,
@@ -32,7 +34,7 @@ export const admin_service = {
         data: {
           user_id: userData.user.id,
           admin_role: payload.admin_role,
-          ...payload,
+          ...adminData,
         },
       });
 

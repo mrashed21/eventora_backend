@@ -1,5 +1,6 @@
 import express from "express";
 import { user_role } from "../../../generated/prisma/enums";
+import { multer_upload } from "../../config/multer";
 import { check_auth } from "../../middleware/check-auth";
 import { validate_request } from "../../middleware/validate-request";
 import { admin_controller } from "./admin.controller";
@@ -16,6 +17,7 @@ router
   )
   .post(
     check_auth(user_role.admin, user_role.super_admin),
+    multer_upload.single("file"),
     validate_request(create_admin_schema),
     admin_controller.create,
   );
@@ -24,6 +26,7 @@ router
   .route("/:id")
   .patch(
     check_auth(user_role.admin, user_role.super_admin),
+    multer_upload.single("file"),
     validate_request(update_admin_schema),
     admin_controller.update,
   )
