@@ -1,0 +1,24 @@
+model Event {
+    id                String   @id @default(uuid(7))
+    event_title       String
+    event_image       String?
+    event_date        DateTime
+    event_time        DateTime
+    event_venue       String
+    event_description String
+    category_id       String
+
+    registration_fee Float?
+    user_id          String
+    category         Categories @relation("category_events", fields: [category_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    user User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+
+    @@index([user_id], name: "idx_event_user_id")
+    @@index([event_date], name: "idx_event_date")
+    @@index([event_title], name: "idx_event_title")
+    @@index([category_id], name: "idx_event_category_id")
+}

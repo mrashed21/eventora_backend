@@ -1,22 +1,18 @@
 model Participants {
-  id String @id @default(uuid(7))
-
-  user_name      String
-  user_email     String    @unique
-  profile_photo  String?
+  id             String    @id @default(uuid(7))
+  user_id        String    @unique
   contact_number String?
-  user_address   String?
-  is_deleted     Boolean   @default(false)
-  deleted_at     DateTime?
   created_at     DateTime  @default(now())
+  deleted_at     DateTime?
+  is_deleted     Boolean   @default(false)
+  profile_photo  String?
   updated_at     DateTime  @updatedAt
+  user_address   String?
+  user_email     String    @unique
+  user_name      String
+  user           User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
-  //relations
-
-  user_id String @unique
-  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  @@index([user_email], name: "idx_participants_user_email")
-  @@index([is_deleted], name: "idx_participants_is_deleted")
+  @@index([user_email], map: "idx_participants_user_email")
+  @@index([is_deleted], map: "idx_participants_is_deleted")
   @@map("participants")
 }

@@ -1,17 +1,17 @@
 enum user_role {
-    user
-    admin
-    super_admin
+  user
+  admin
+  super_admin
 }
 
 enum user_status {
-    active
-    in_active
-    banned
-    deleted
+  active
+  in_active
+  banned
+  deleted
 }
 
 enum gender {
-    male
-    female
+  male
+  female
 }

@@ -1,0 +1,13 @@
+model Categories {
+    id                   String   @id @default(uuid(7))
+    category_name        String   @unique
+    category_description String?
+    is_active            Boolean  @default(true)
+    created_at           DateTime @default(now())
+    updated_at           DateTime @updatedAt
+    events               Event[]  @relation("category_events")
+
+    @@index([category_name], name: "idx_categories_name")
+    @@index([is_active], name: "idx_categories_is_active")
+    @@map("categories")
+}

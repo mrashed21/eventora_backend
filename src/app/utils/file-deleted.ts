@@ -1,4 +1,5 @@
 import { Request } from "express";
+import { delete_file } from "../config/file-uploder";
 // import { deleteFileFromCloudinary } from "../config/cloudinary.config";
 
 export const file_delete = async (req: Request) => {
@@ -32,11 +33,11 @@ export const file_delete = async (req: Request) => {
 
     if (filesToDelete.length > 0) {
       await Promise.all(
-        // filesToDelete.map((url) => deleteFileFromCloudinary(url)),
-        filesToDelete.map((url) => {
-          console.log(`Simulating deletion of file at URL: ${url}`);
-          return Promise.resolve(); // Simulate successful deletion
-        }),
+        filesToDelete.map((url) => delete_file(url)),
+        // filesToDelete.map((url) => {
+        //   console.log(`Simulating deletion of file at URL: ${url}`);
+        //   return Promise.resolve(); // Simulate successful deletion
+        // }),
       );
       console.log(
         `\nDeleted ${filesToDelete.length} uploaded file(s) from Cloudinary due to an error during request processing.\n`,
