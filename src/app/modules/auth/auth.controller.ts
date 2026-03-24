@@ -39,7 +39,7 @@ export const auth_controller = {
     send_response(res, {
       statusCode: status.OK,
       success: true,
-      message: "Email verified successfully",
+      message: "Verified successfully! You can now log in.",
     });
   }),
 
@@ -184,6 +184,18 @@ export const auth_controller = {
       statusCode: status.OK,
       success: true,
       message: "Password reset successfully",
+    });
+  }),
+
+  // ! resend otp
+  resend_otp: catch_async(async (req: Request, res: Response) => {
+    const { email } = req.body;
+    await auth_service.resend_otp(email);
+
+    send_response(res, {
+      statusCode: status.OK,
+      success: true,
+      message: "OTP sent successfully",
     });
   }),
 

@@ -36,7 +36,7 @@ router
 
 router.route("/forget_password").post(auth_controller.forget_password);
 router.route("/reset_password").post(auth_controller.reset_password);
-
+router.route("/resend_otp").post(auth_controller.resend_otp);
 router.route("/login/google").get(auth_controller.google_login);
 
 router.route("/google/success").get(auth_controller.google_login_success);

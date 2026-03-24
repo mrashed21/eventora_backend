@@ -349,6 +349,7 @@ export const auth_service = {
       },
     });
   },
+
   // ! reset password
   reset_password: async (email: string, otp: string, new_password: string) => {
     const is_user_exist = await prisma.user.findUnique({
@@ -396,6 +397,33 @@ export const auth_service = {
         userId: is_user_exist.id,
       },
     });
+  },
+
+  // ! resend otp
+  resend_otp: async (email: string) => {
+    const normalized_email = email.trim().toLowerCase();
+
+    const user = await prisma.user.findUnique({
+      where: { email: normalized_email },
+    });
+
+    if (!user) {
+      throw new api_error(status.NOT_FOUND, "User not found");
+    }
+
+    if (user.emailVerified) {
+      throw new api_error(status.BAD_REQUEST, "Email already verified");
+    }
+
+    await auth.api.sendVerificationEmail({
+      body: {
+        email: normalized_email,
+      },
+    });
+
+    return {
+      message: "OTP sent successfully",
+    };
   },
 
   // ! google login
