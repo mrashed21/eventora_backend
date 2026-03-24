@@ -1,5 +1,6 @@
 import express from "express";
-import { user_role } from "../../../generated/prisma/enums";
+// import { user_role } from "../../../generated/prisma/enums";
+import { user_role } from "@prisma/client";
 import { check_auth } from "../../middleware/check-auth";
 import { validate_request } from "../../middleware/validate-request";
 import { category_controller } from "./category.controller";

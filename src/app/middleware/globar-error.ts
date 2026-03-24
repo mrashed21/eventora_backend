@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import status from "http-status";
 import z from "zod";
-import { Prisma } from "../../generated/prisma/client";
+// import { Prisma } from "../../generated/prisma/client";
+import { Prisma } from "@prisma/client";
 import { config } from "../config/config";
 import api_error from "../error-helper/api-error";
 import {

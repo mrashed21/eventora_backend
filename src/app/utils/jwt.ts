@@ -1,5 +1,6 @@
+import { user_role, user_status } from "@prisma/client";
 import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
-import { user_role, user_status } from "../../generated/prisma/enums";
+// import { user_role, user_status } from "../../generated/prisma/enums";
 
 export interface IJwtPayload extends JwtPayload {
   id: string;

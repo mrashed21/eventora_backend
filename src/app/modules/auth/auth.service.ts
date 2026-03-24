@@ -1,6 +1,6 @@
 import status from "http-status";
 import { JwtPayload } from "jsonwebtoken";
-import { user_role, user_status } from "../../../generated/prisma/enums";
+// import { user_role, user_status } from "../../../generated/prisma/enums";
 import { config } from "../../config/config";
 import api_error from "../../error-helper/api-error";
 import { auth } from "../../lib/auth";
@@ -8,6 +8,7 @@ import { prisma } from "../../lib/prisma";
 import { jwt_token } from "../../utils/jwt";
 import { token_utils } from "../../utils/token";
 import { IChangePasswordPayload, Register_payload } from "./auth.interface";
+import { user_role, user_status } from "@prisma/client";
 
 export const auth_service = {
   // ! register user

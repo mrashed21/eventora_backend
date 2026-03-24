@@ -1,6 +1,7 @@
 import status from "http-status";
-import { Prisma } from "../../generated/prisma/client";
+// import { Prisma } from "../../generated/prisma/client";
 import { TErrorResponse, TErrorSource } from "../interface/error.interface";
+import { Prisma } from "@prisma/client";
 
 const StatusCodeError = (errorCode: string): number => {
   //P2002: Unique constraint failed
