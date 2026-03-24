@@ -7,19 +7,12 @@ import { buildSearchConditions } from "../../utils/search";
 export const category_service = {
   // ! create
   create: async (payload: any) => {
-    const exists = await prisma.categories.findUnique({
-      where: { category_name: payload.category_name },
-    });
-
-    if (exists) {
-      throw new api_error(status.BAD_REQUEST, "Category already exists");
-    }
-
     const result = await prisma.categories.create({
       data: {
-        category_name: payload.category_name,
+        category_type: payload.category_type,
         category_description: payload.category_description,
-        is_active: payload.is_active ?? true,
+        category_status: payload.category_status,
+        is_paid: payload.is_paid ?? true,
       },
     });
 
@@ -37,27 +30,20 @@ export const category_service = {
     }
     const updateData: any = {};
 
-    if (payload.category_name !== undefined) {
-      const exists = await prisma.categories.findFirst({
-        where: {
-          category_name: payload.category_name,
-          NOT: { id },
-        },
-      });
-
-      if (exists) {
-        throw new api_error(status.BAD_REQUEST, "Category name already exists");
-      }
-
-      updateData.category_name = payload.category_name;
+    if (payload.category_type !== undefined) {
+      updateData.category_type = payload.category_type;
     }
 
     if (payload.category_description !== undefined) {
       updateData.category_description = payload.category_description;
     }
 
-    if (payload.is_active !== undefined) {
-      updateData.is_active = payload.is_active;
+    if (payload.category_status !== undefined) {
+      updateData.category_status = payload.category_status;
+    }
+
+    if (payload.is_paid !== undefined) {
+      updateData.is_paid = payload.is_paid;
     }
 
     const result = await prisma.categories.update({
@@ -88,7 +74,7 @@ export const category_service = {
   // ! public
   get: async () => {
     return await prisma.categories.findMany({
-      where: { is_active: true },
+      where: { category_status: "active" },
       orderBy: { created_at: "desc" },
     });
   },
@@ -108,7 +94,7 @@ export const category_service = {
     });
 
     const searchCondition = buildSearchConditions(search_term, [
-      "category_name",
+      "category_type",
       "category_description",
     ]);
 
@@ -116,8 +102,8 @@ export const category_service = {
       ...searchCondition,
     };
 
-    if (query.is_active !== undefined) {
-      whereCondition.is_active = query.is_active === "true";
+    if (query.category_status !== undefined) {
+      whereCondition.category_status = query.category_status;
     }
 
     const [data, total] = await Promise.all([

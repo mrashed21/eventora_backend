@@ -1,7 +1,7 @@
 import status from "http-status";
 // import { Prisma } from "../../generated/prisma/client";
-import { TErrorResponse, TErrorSource } from "../interface/error.interface";
 import { Prisma } from "@prisma/client";
+import { TErrorResponse, TErrorSource } from "../interface/error.interface";
 
 const StatusCodeError = (errorCode: string): number => {
   //P2002: Unique constraint failed
@@ -114,14 +114,20 @@ export const PrismaKnownError = (
   let cleanMessage = error.message;
 
   // Remove the "Invalid `prisma.user.create()` invocation: " part from the message for better readability
-  cleanMessage = cleanMessage.replace(/Invalid `.*?` invocation:?\s*/i, "");
-
+  cleanMessage = cleanMessage
+    .replace(/Invalid `.*?` invocation:\s*/i, "")
+    .trim();
   // split by new line and take the first line as the main message, rest can be added to error sources
 
   const lines = cleanMessage.split("\n").filter((line) => line.trim());
   const mainMessage =
-    lines[0] || "An error occurred with the database operation.";
-
+    lines.find(
+      (line) =>
+        line.toLowerCase().includes("constraint") ||
+        line.toLowerCase().includes("failed"),
+    ) ||
+    lines[0] ||
+    "Database operation failed";
   const errorSource: TErrorSource[] = [
     {
       path: error.code,

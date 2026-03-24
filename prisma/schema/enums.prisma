@@ -8,6 +8,7 @@ enum admin_role {
   super_admin
   admin
 }
+
 enum user_status {
   active
   in_active
@@ -18,4 +19,15 @@ enum user_status {
 enum gender {
   male
   female
+}
+
+enum category_status {
+  active
+  in_active
+}
+
+enum event_status {
+  active
+  in_active
+  cancelled
 }

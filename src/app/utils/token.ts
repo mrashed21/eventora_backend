@@ -24,10 +24,10 @@ export const token_utils = {
     access: (res: Response, token: string) => {
       cookie_utils.set(res, "access_token", token, {
         httpOnly: true,
-        secure: true,
-        // secure: false,
-        sameSite: "none",
-        // sameSite: "lax",
+        // secure: true,
+        secure: false,
+        // sameSite: "none",
+        sameSite: "lax",
         path: "/",
         maxAge: 1000 * 60 * 60 * 24, // 1 day
       });
@@ -36,10 +36,10 @@ export const token_utils = {
     refresh: (res: Response, token: string) => {
       cookie_utils.set(res, "refresh_token", token, {
         httpOnly: true,
-        secure: true,
-        // secure: false,
-        sameSite: "none",
-        // sameSite: "lax",
+        // secure: true,
+        secure: false,
+        // sameSite: "none",
+        sameSite: "lax",
         path: "/",
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       });
@@ -48,21 +48,13 @@ export const token_utils = {
     betterAuth: (res: Response, token: string) => {
       cookie_utils.set(res, "better-auth.session_token", token, {
         httpOnly: true,
-        secure: true,
-        // secure: false,
-        sameSite: "none",
-        // sameSite: "lax",
+        // secure: true,
+        secure: false,
+        // sameSite: "none",
+        sameSite: "lax",
         path: "/",
         maxAge: 1000 * 60 * 60 * 24,
       });
     },
   },
 };
-
-/**
- * getAccessToken(payload) || token_utils.create.access(payload)
- * getRefreshToken(payload) || token_utils.create.refresh(payload)
- * createAccessTokenAndSetCookie(res, token) || token_utils.setCookie.access(res, token)
- * createRefreshTokenAndSetCookie(res, token) || token_utils.setCookie.refresh(res, token)
- * createBetterAuthTokenAndSetCookie(res, token) || token_utils.setCookie.betterAuth(res, token)
- */
