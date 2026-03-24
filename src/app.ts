@@ -1,9 +1,11 @@
+import { toNodeHandler } from "better-auth/node";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { Application, Request, Response } from "express";
 import path from "path";
 import qs from "qs";
 import { config } from "./app/config/config";
+import { auth } from "./app/lib/auth";
 import { global_error_handler } from "./app/middleware/globar-error";
 import { not_found } from "./app/middleware/not-found";
 import router from "./app/routers/router";
@@ -37,7 +39,7 @@ app.use(
 );
 
 //! Mount the auth routes using better-auth's toNodeHandler
-// app.use("/api/auth", toNodeHandler(auth));
+app.use("/api/auth", toNodeHandler(auth));
 
 //! Enable URL-encoded form data parsing
 app.use(express.urlencoded({ extended: true }));

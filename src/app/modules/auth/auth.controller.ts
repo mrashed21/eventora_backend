@@ -191,7 +191,7 @@ export const auth_controller = {
 
   // /api/v1/auth/login/google?redirect=/profile
   google_login: catch_async((req: Request, res: Response) => {
-    const redirectPath = req.query.redirect || "/dashboard";
+    const redirectPath = req.query.redirect || "/";
 
     const encoded_redirect_path = encodeURIComponent(redirectPath as string);
 
@@ -205,7 +205,7 @@ export const auth_controller = {
 
   // ! google login success
   google_login_success: catch_async(async (req: Request, res: Response) => {
-    const redirectPath = (req.query.redirect as string) || "/dashboard";
+    const redirectPath = (req.query.redirect as string) || "/";
 
     const sessionToken = req.cookies["better-auth.session_token"];
 
@@ -238,7 +238,7 @@ export const auth_controller = {
     // ?redirect=//profile -> /profile
     const isValidRedirectPath =
       redirectPath.startsWith("/") && !redirectPath.startsWith("//");
-    const finalRedirectPath = isValidRedirectPath ? redirectPath : "/dashboard";
+    const finalRedirectPath = isValidRedirectPath ? redirectPath : "/";
 
     res.redirect(`${config.FRONTEND_URL}${finalRedirectPath}`);
   }),
