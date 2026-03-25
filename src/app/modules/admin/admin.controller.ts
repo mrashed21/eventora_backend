@@ -51,7 +51,7 @@ export const admin_controller = {
     send_response(res, {
       statusCode: status.OK,
       success: true,
-      message: "Admins retrieved successfully",
+      message: "Admins fetched successfully",
       data: result,
     });
   }),

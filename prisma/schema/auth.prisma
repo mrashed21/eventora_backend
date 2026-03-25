@@ -5,7 +5,7 @@ model User {
     createdAt            DateTime      @default(now()) @map("created_at")
     deletedAt            DateTime?     @map("deleted_at")
     emailVerified        Boolean       @default(false) @map("email_verified")
-    isDeleted            Boolean       @default(false) @map("is_deleted")
+    is_deleted           Boolean       @default(false)
     need_password_change Boolean       @default(true) @map("need_password_change")
     updatedAt            DateTime      @updatedAt @map("updated_at")
     image                String?       @map("user_image")

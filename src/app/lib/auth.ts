@@ -30,7 +30,7 @@ export const auth = betterAuth({
           user_status: user_status.active,
           need_password_change: false,
           emailVerified: true,
-          isDeleted: false,
+          is_deleted: false,
           deletedAt: null,
         };
       },
@@ -60,7 +60,7 @@ export const auth = betterAuth({
         required: true,
         defaultValue: false,
       },
-      isDeleted: {
+      is_deleted: {
         type: "boolean",
         required: true,
         defaultValue: false,

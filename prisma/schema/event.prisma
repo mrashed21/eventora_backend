@@ -13,7 +13,8 @@ model Event {
     user_id          String
     category         Categories @relation("category_events", fields: [category_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-    user User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    user         User               @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    participants EventParticipant[]
 
     created_at DateTime @default(now())
     updated_at DateTime @updatedAt

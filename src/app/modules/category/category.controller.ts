@@ -50,7 +50,7 @@ export const category_controller = {
     send_response(res, {
       statusCode: status.OK,
       success: true,
-      message: "Categories retrieved successfully",
+      message: "Categories fetched successfully",
       data: result,
     });
   }),
@@ -62,7 +62,7 @@ export const category_controller = {
     send_response(res, {
       statusCode: status.OK,
       success: true,
-      message: "Categories retrieved successfully",
+      message: "Categories fetched successfully",
       data: result,
     });
   }),

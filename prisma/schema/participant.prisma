@@ -11,7 +11,7 @@ model Participants {
   user_email     String    @unique
   user_name      String
   user           User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
+ events           EventParticipant[]
   @@index([user_email], map: "idx_participants_user_email")
   @@index([is_deleted], map: "idx_participants_is_deleted")
   @@map("participants")
