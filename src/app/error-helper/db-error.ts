@@ -120,14 +120,10 @@ export const PrismaKnownError = (
   // split by new line and take the first line as the main message, rest can be added to error sources
 
   const lines = cleanMessage.split("\n").filter((line) => line.trim());
-  const mainMessage =
-    lines.find(
-      (line) =>
-        line.toLowerCase().includes("constraint") ||
-        line.toLowerCase().includes("failed"),
-    ) ||
-    lines[0] ||
-    "Database operation failed";
+  const mainMessage = cleanMessage.includes("Unknown argument")
+    ? "Invalid field provided in request"
+    : lines[0] || "Invalid query parameters";
+
   const errorSource: TErrorSource[] = [
     {
       path: error.code,
@@ -191,7 +187,10 @@ export const PrismaValidationError = (
 
   // extract field name for field-specific validation errors
   // Example message: "Argument `data.email`: Got invalid value `invalid-email` on prisma.user.create()"
-  const fieldMatch = cleanMessage.match(/Argument `(\w+)`/i);
+  const fieldMatch =
+    cleanMessage.match(/Argument `(\w+)`/i) ||
+    cleanMessage.match(/Unknown argument `(\w+)`/i);
+
   const fieldName = fieldMatch ? fieldMatch[1] : "Unknown Field";
 
   //main message

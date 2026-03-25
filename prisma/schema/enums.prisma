@@ -29,5 +29,9 @@ enum category_status {
 enum event_status {
   active
   in_active
-  cancelled
+}
+
+enum event_type {
+  public
+  private
 }

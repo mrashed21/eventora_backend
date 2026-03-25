@@ -6,31 +6,100 @@ import { buildSearchConditions } from "../../utils/search";
 
 export const event_service = {
   // ! create
-  create: async (payload: any) => {
+  create: async (payload: any, user_id: string) => {
+    const {
+      is_paid,
+      registration_fee,
+      event_type,
+      event_date,
+      event_time,
+      ...rest
+    } = payload;
+
+    const finalIsPaid = is_paid ?? false;
+
+    const finalRegistrationFee = finalIsPaid
+      ? Number(registration_fee ?? 0)
+      : null;
+
     const result = await prisma.event.create({
-      data: payload,
+      data: {
+        ...rest,
+        user_id,
+        event_type: event_type ?? "public",
+        is_paid: finalIsPaid,
+        registration_fee: finalRegistrationFee,
+        event_date: event_date,
+        event_time: event_time,
+      },
     });
+
     return result;
   },
-  //   ! update
+
+  // ! update
   update: async (id: string, payload: any, user_id: string) => {
     const event = await prisma.event.findUnique({
       where: { id },
     });
+
     if (!event) {
       throw new api_error(status.NOT_FOUND, "Event not found");
     }
-    // Check if the user is the owner of the event
+
     if (event.user_id !== user_id) {
       throw new api_error(
         status.FORBIDDEN,
         "You are not the owner of this event",
       );
     }
+
+    const {
+      is_paid,
+      registration_fee,
+      event_type,
+      event_date,
+      event_time,
+      ...rest
+    } = payload;
+
+    const updateData: any = {
+      ...rest,
+    };
+
+    if (event_type !== undefined) {
+      updateData.event_type = event_type;
+    }
+
+    if (event_date !== undefined) {
+      updateData.event_date = new Date(event_date);
+    }
+
+    if (event_time !== undefined) {
+      updateData.event_time = new Date(event_time);
+    }
+
+    if (is_paid !== undefined) {
+      updateData.is_paid = is_paid;
+      updateData.registration_fee = is_paid
+        ? Number(registration_fee ?? event.registration_fee ?? 0)
+        : null;
+    } else if (registration_fee !== undefined) {
+      updateData.registration_fee = Number(registration_fee);
+    }
+
     const updatedEvent = await prisma.event.update({
       where: { id },
-      data: payload,
+      data: updateData,
+      include: {
+        _count: {
+          select: {
+            participants: true,
+          },
+        },
+      },
     });
+
     return updatedEvent;
   },
 
@@ -78,7 +147,7 @@ export const event_service = {
     };
   },
 
-  //   ! public
+  // ! public get all
   get: async (query: any) => {
     const { search_term, page, limit } = query;
 
@@ -95,6 +164,7 @@ export const event_service = {
     const searchCondition = buildSearchConditions(search_term, [
       "event_title",
       "event_description",
+      "event_venue",
     ]);
 
     const whereCondition: any = {
@@ -103,6 +173,14 @@ export const event_service = {
 
     if (query.event_status !== undefined) {
       whereCondition.event_status = query.event_status;
+    }
+
+    if (query.event_type !== undefined) {
+      whereCondition.event_type = query.event_type;
+    }
+
+    if (query.is_paid !== undefined) {
+      whereCondition.is_paid = query.is_paid === "true";
     }
 
     const [data, total] = await Promise.all([
@@ -114,6 +192,7 @@ export const event_service = {
           [sortBy]: sortOrder,
         },
         include: {
+          user: true,
           _count: {
             select: {
               participants: true,
@@ -137,11 +216,17 @@ export const event_service = {
     };
   },
 
-  // ! get by id
+  // ! get details by id
   get_details: async (id: string) => {
     const result = await prisma.event.findUnique({
       where: { id },
       include: {
+        user: true,
+        participants: {
+          include: {
+            participant: true,
+          },
+        },
         _count: {
           select: {
             participants: true,
@@ -149,9 +234,11 @@ export const event_service = {
         },
       },
     });
+
     if (!result) {
       throw new api_error(status.NOT_FOUND, "Event not found");
     }
+
     return result;
   },
 
@@ -172,12 +259,25 @@ export const event_service = {
     const searchCondition = buildSearchConditions(search_term, [
       "event_title",
       "event_description",
+      "event_venue",
     ]);
 
     const whereCondition: any = {
       user_id,
       ...searchCondition,
     };
+
+    if (query.event_status !== undefined) {
+      whereCondition.event_status = query.event_status;
+    }
+
+    if (query.event_type !== undefined) {
+      whereCondition.event_type = query.event_type;
+    }
+
+    if (query.is_paid !== undefined) {
+      whereCondition.is_paid = query.is_paid === "true";
+    }
 
     const [events, total] = await Promise.all([
       prisma.event.findMany({
@@ -191,6 +291,11 @@ export const event_service = {
           participants: {
             include: {
               participant: true,
+            },
+          },
+          _count: {
+            select: {
+              participants: true,
             },
           },
         },
@@ -225,12 +330,14 @@ export const event_service = {
         user_role: true,
       },
     });
+
     if (!admin) {
       throw new api_error(
         status.FORBIDDEN,
         "You are not allowed to access this resource",
       );
     }
+
     const { search_term, page, limit } = query;
 
     const {
@@ -246,6 +353,7 @@ export const event_service = {
     const searchCondition = buildSearchConditions(search_term, [
       "event_title",
       "event_description",
+      "event_venue",
     ]);
 
     const whereCondition: any = {
@@ -254,6 +362,14 @@ export const event_service = {
 
     if (query.event_status !== undefined) {
       whereCondition.event_status = query.event_status;
+    }
+
+    if (query.event_type !== undefined) {
+      whereCondition.event_type = query.event_type;
+    }
+
+    if (query.is_paid !== undefined) {
+      whereCondition.is_paid = query.is_paid === "true";
     }
 
     const [events, total] = await Promise.all([
@@ -265,9 +381,15 @@ export const event_service = {
           [sortBy]: sortOrder,
         },
         include: {
+          user: true,
           participants: {
             include: {
               participant: true,
+            },
+          },
+          _count: {
+            select: {
+              participants: true,
             },
           },
         },

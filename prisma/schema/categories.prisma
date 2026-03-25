@@ -6,7 +6,6 @@ model Categories {
     is_paid              Boolean         @default(true)
     created_at           DateTime        @default(now())
     updated_at           DateTime        @updatedAt
-    events               Event[]         @relation("category_events")
 
     @@index([category_type], name: "idx_categories_type")
     @@index([category_status], name: "idx_categories_status")

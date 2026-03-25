@@ -32,7 +32,7 @@ router
   .route("/user")
   .get(
     check_auth(user_role.user, user_role.admin, user_role.super_admin),
-    event_controller.get_admin,
+    event_controller.get_by_user_id,
   );
 
 router
