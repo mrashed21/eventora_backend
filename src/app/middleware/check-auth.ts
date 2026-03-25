@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import status from "http-status";
 // import { user_role, user_status } from "../../generated/prisma/enums";
+import { user_role, user_status } from "@prisma/client";
 import { config } from "../config/config";
 import api_error from "../error-helper/api-error";
 import { prisma } from "../lib/prisma";
 import { cookie_utils } from "../utils/cookie";
 import { jwt_token } from "../utils/jwt";
-import { user_role, user_status } from "@prisma/client";
 
 export const check_auth =
   (...authRoles: user_role[]) =>
@@ -60,7 +60,7 @@ export const check_auth =
           if (
             user.user_status === user_status.banned ||
             user.user_status === user_status.deleted ||
-            user.isDeleted
+            user.is_deleted
           ) {
             throw new api_error(
               status.UNAUTHORIZED,

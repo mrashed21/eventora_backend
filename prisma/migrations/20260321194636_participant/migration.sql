@@ -6,7 +6,7 @@
   - You are about to drop the column `createdAt` on the `participants` table. All the data in the column will be lost.
   - You are about to drop the column `deletedAt` on the `participants` table. All the data in the column will be lost.
   - You are about to drop the column `email` on the `participants` table. All the data in the column will be lost.
-  - You are about to drop the column `isDeleted` on the `participants` table. All the data in the column will be lost.
+  - You are about to drop the column `is_deleted` on the `participants` table. All the data in the column will be lost.
   - You are about to drop the column `name` on the `participants` table. All the data in the column will be lost.
   - You are about to drop the column `profilePhoto` on the `participants` table. All the data in the column will be lost.
   - You are about to drop the column `updatedAt` on the `participants` table. All the data in the column will be lost.
@@ -20,7 +20,7 @@
 DROP INDEX "idx_participants_email";
 
 -- DropIndex
-DROP INDEX "idx_participants_isDeleted";
+DROP INDEX "idx_participants_is_deleted";
 
 -- DropIndex
 DROP INDEX "participants_email_key";
@@ -31,7 +31,7 @@ DROP COLUMN "contactNumber",
 DROP COLUMN "createdAt",
 DROP COLUMN "deletedAt",
 DROP COLUMN "email",
-DROP COLUMN "isDeleted",
+DROP COLUMN "is_deleted",
 DROP COLUMN "name",
 DROP COLUMN "profilePhoto",
 DROP COLUMN "updatedAt",

@@ -20,7 +20,7 @@
   - You are about to drop the column `deletedAt` on the `user` table. All the data in the column will be lost.
   - You are about to drop the column `emailVerified` on the `user` table. All the data in the column will be lost.
   - You are about to drop the column `image` on the `user` table. All the data in the column will be lost.
-  - You are about to drop the column `isDeleted` on the `user` table. All the data in the column will be lost.
+  - You are about to drop the column `is_deleted` on the `user` table. All the data in the column will be lost.
   - You are about to drop the column `need_password_change` on the `user` table. All the data in the column will be lost.
   - You are about to drop the column `role` on the `user` table. All the data in the column will be lost.
   - You are about to drop the column `status` on the `user` table. All the data in the column will be lost.
@@ -99,7 +99,7 @@ ALTER TABLE "user" DROP COLUMN "createdAt",
 DROP COLUMN "deletedAt",
 DROP COLUMN "emailVerified",
 DROP COLUMN "image",
-DROP COLUMN "isDeleted",
+DROP COLUMN "is_deleted",
 DROP COLUMN "need_password_change",
 DROP COLUMN "role",
 DROP COLUMN "status",

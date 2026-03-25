@@ -1,6 +1,7 @@
 import status from "http-status";
 import { JwtPayload } from "jsonwebtoken";
 // import { user_role, user_status } from "../../../generated/prisma/enums";
+import { user_role, user_status } from "@prisma/client";
 import { config } from "../../config/config";
 import api_error from "../../error-helper/api-error";
 import { auth } from "../../lib/auth";
@@ -8,7 +9,6 @@ import { prisma } from "../../lib/prisma";
 import { jwt_token } from "../../utils/jwt";
 import { token_utils } from "../../utils/token";
 import { IChangePasswordPayload, Register_payload } from "./auth.interface";
-import { user_role, user_status } from "@prisma/client";
 
 export const auth_service = {
   // ! register user
@@ -54,7 +54,7 @@ export const auth_service = {
         user_email: result.user.email,
         user_name: result.user.name,
         user_role: result.user.user_role as user_role,
-        is_deleted: result.user.isDeleted,
+        is_deleted: result.user.is_deleted,
         user_status: result.user.user_status as user_status,
         email_verified: result.user.emailVerified,
       });
@@ -64,7 +64,7 @@ export const auth_service = {
         user_email: result.user.email,
         user_name: result.user.name,
         user_role: result.user.user_role as user_role,
-        is_deleted: result.user.isDeleted,
+        is_deleted: result.user.is_deleted,
         user_status: result.user.user_status as user_status,
         email_verified: result.user.emailVerified,
       });
@@ -126,7 +126,7 @@ export const auth_service = {
       throw new api_error(status.BAD_REQUEST, "User is inactive");
     }
     if (
-      result.user.isDeleted ||
+      result.user.is_deleted ||
       result.user.user_status === user_status.deleted
     ) {
       throw new api_error(status.BAD_REQUEST, "User is deleted");
@@ -137,7 +137,7 @@ export const auth_service = {
       user_email: result.user.email,
       user_name: result.user.name,
       user_role: result.user.user_role as user_role,
-      is_deleted: result.user.isDeleted,
+      is_deleted: result.user.is_deleted,
       user_status: result.user.user_status as user_status,
       email_verified: result.user.emailVerified,
     });
@@ -147,7 +147,7 @@ export const auth_service = {
       user_email: result.user.email,
       user_name: result.user.name,
       user_role: result.user.user_role as user_role,
-      is_deleted: result.user.isDeleted,
+      is_deleted: result.user.is_deleted,
       user_status: result.user.user_status as user_status,
       email_verified: result.user.emailVerified,
     });
@@ -211,7 +211,7 @@ export const auth_service = {
       user_email: data.user.email,
       user_name: data.user.name,
       user_role: data.user.user_role as user_role,
-      is_deleted: data.user.isDeleted,
+      is_deleted: data.user.is_deleted,
       user_status: data.user.user_status as user_status,
       email_verified: data.user.emailVerified,
     });
@@ -221,7 +221,7 @@ export const auth_service = {
       user_email: data.user.email,
       user_name: data.user.name,
       user_role: data.user.user_role as user_role,
-      is_deleted: data.user.isDeleted,
+      is_deleted: data.user.is_deleted,
       user_status: data.user.user_status as user_status,
       email_verified: data.user.emailVerified,
     });
@@ -298,7 +298,7 @@ export const auth_service = {
       user_email: session.user.email,
       user_name: session.user.name,
       user_role: session.user.user_role as user_role,
-      is_deleted: session.user.isDeleted,
+      is_deleted: session.user.is_deleted,
       user_status: session.user.user_status as user_status,
       email_verified: session.user.emailVerified,
     });
@@ -308,7 +308,7 @@ export const auth_service = {
       user_email: session.user.email,
       user_name: session.user.name,
       user_role: session.user.user_role as user_role,
-      is_deleted: session.user.isDeleted,
+      is_deleted: session.user.is_deleted,
       user_status: session.user.user_status as user_status,
       email_verified: session.user.emailVerified,
     });
@@ -338,7 +338,7 @@ export const auth_service = {
     }
 
     if (
-      is_user_exist.isDeleted ||
+      is_user_exist.is_deleted ||
       is_user_exist.user_status === user_status.deleted
     ) {
       throw new api_error(status.NOT_FOUND, "User not found");
@@ -368,7 +368,7 @@ export const auth_service = {
     }
 
     if (
-      is_user_exist.isDeleted ||
+      is_user_exist.is_deleted ||
       is_user_exist.user_status === user_status.deleted
     ) {
       throw new api_error(status.NOT_FOUND, "User not found");
@@ -463,7 +463,7 @@ export const auth_service = {
       user_email: session.user.email,
       user_name: session.user.name,
       user_role: session.user.user_role as user_role,
-      is_deleted: session.user.isDeleted,
+      is_deleted: session.user.is_deleted,
       user_status: session.user.user_status as user_status,
       email_verified: session.user.emailVerified,
     });
@@ -473,7 +473,7 @@ export const auth_service = {
       user_email: session.user.email,
       user_name: session.user.name,
       user_role: session.user.user_role as user_role,
-      is_deleted: session.user.isDeleted,
+      is_deleted: session.user.is_deleted,
       user_status: session.user.user_status as user_status,
       email_verified: session.user.emailVerified,
     });
