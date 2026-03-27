@@ -9,9 +9,9 @@ model Event {
     event_status      event_status @default(active)
     event_type        event_type   @default(public)
     is_paid           Boolean      @default(false)
-
-    registration_fee Float?
-    user_id          String
+    is_featured       Boolean      @default(false)
+    registration_fee  Float?
+    user_id           String
 
     user         User               @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
     participants EventParticipant[]

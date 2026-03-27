@@ -72,11 +72,11 @@ export const event_service = {
     }
 
     if (event_date !== undefined) {
-      updateData.event_date = new Date(event_date);
+      updateData.event_date = event_date;
     }
 
     if (event_time !== undefined) {
-      updateData.event_time = new Date(event_time);
+      updateData.event_time = event_time;
     }
 
     if (is_paid !== undefined) {
@@ -288,6 +288,7 @@ export const event_service = {
           [sortBy]: sortOrder,
         },
         include: {
+          user: true,
           participants: {
             include: {
               participant: true,
@@ -414,5 +415,29 @@ export const event_service = {
       },
       data,
     };
+  },
+
+  // ! get feturead events
+  get_featured: async () => {
+    const result = await prisma.event.findMany({
+      where: {
+        is_featured: true,
+      },
+      include: {
+        user: true,
+        participants: {
+          include: {
+            participant: true,
+          },
+        },
+        _count: {
+          select: {
+            participants: true,
+          },
+        },
+      },
+    });
+
+    return result;
   },
 };

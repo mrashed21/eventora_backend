@@ -81,6 +81,7 @@ export const event_controller = {
   // ! get by user id
   get_by_user_id: catch_async(async (req: Request, res: Response) => {
     const user_id = req.user.id;
+    console.log("req.user: ", req.user);
     const result = await event_service.get_by_user_id(
       user_id as string,
       req.query,
