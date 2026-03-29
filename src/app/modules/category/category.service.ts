@@ -102,6 +102,67 @@ export const category_service = {
     });
   },
 
+  // ! public
+  home: async (query: any) => {
+    const { search_term, page, limit } = query;
+
+    const {
+      skip,
+      limit: take,
+      sortBy,
+      sortOrder,
+    } = calculatePagination({
+      page,
+      limit,
+    });
+
+    const searchCondition = buildSearchConditions(search_term, [
+      "category_title",
+      "category_type",
+      "category_description",
+    ]);
+
+    const whereCondition: any = {
+      ...searchCondition,
+    };
+
+    if (query.category_status !== undefined) {
+      whereCondition.category_status = query.category_status;
+    }
+
+    if (query.category_type !== undefined) {
+      whereCondition.category_type = query.category_type;
+    }
+
+    if (query.is_paid !== undefined) {
+      whereCondition.is_paid = query.is_paid === "true";
+    }
+
+    const [data, total] = await Promise.all([
+      prisma.categories.findMany({
+        where: whereCondition,
+        skip,
+        take,
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+      }),
+      prisma.categories.count({
+        where: whereCondition,
+      }),
+    ]);
+
+    return {
+      meta: {
+        page: Number(page) || 1,
+        limit: take,
+        total,
+        totalPage: Math.ceil(total / take),
+      },
+      data,
+    };
+  },
+
   // ! admin
   get_admin: async (query: any) => {
     const { search_term, page, limit } = query;

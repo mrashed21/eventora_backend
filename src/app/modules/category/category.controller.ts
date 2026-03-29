@@ -69,6 +69,18 @@ export const category_controller = {
     });
   }),
 
+  // ! public get
+  home: catch_async(async (req: Request, res: Response) => {
+    const result = await category_service.home(req.query);
+
+    send_response(res, {
+      statusCode: status.OK,
+      success: true,
+      message: "Categories fetched successfully",
+      data: result,
+    });
+  }),
+
   // ! admin get
   get_admin: catch_async(async (req: Request, res: Response) => {
     const result = await category_service.get_admin(req.query);

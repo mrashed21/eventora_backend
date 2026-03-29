@@ -10,6 +10,11 @@ import {
   update_category_schema,
 } from "./category.validation";
 const router = express.Router();
+// !home
+router
+  .route("/home")
+  .get(category_controller.home)
+
 
 // ! get for admin
 router
