@@ -12,12 +12,6 @@ const registrationFeeSchema = z.preprocess((value) => {
   return value;
 }, z.number("Registration fee must be a number").min(0, "Registration fee cannot be negative").optional());
 
-const isPaidSchema = z.preprocess((value) => {
-  if (value === "true") return true;
-  if (value === "false") return false;
-  return value;
-}, z.boolean().optional());
-
 export const create_event_schema = z.object({
   event_title: z
     .string()
@@ -31,9 +25,9 @@ export const create_event_schema = z.object({
     .url("Event image must be a valid URL")
     .optional(),
 
-  event_date: z.string("Event date must be a string"),
+  event_date: z.string().min(1, "Event date is required"),
 
-  event_time: z.string("Event time must be a string"),
+  event_time: z.string().min(1, "Event time is required"),
 
   event_venue: z
     .string()
@@ -48,7 +42,9 @@ export const create_event_schema = z.object({
     .max(5000, "Event description cannot exceed 5000 characters"),
 
   event_status: z.enum(["active", "in_active"]).optional(),
-  category_id: z.string("Category ID must be a string"),
+
+  category_id: z.string().min(1, "Category ID is required"),
+
   registration_fee: registrationFeeSchema,
 });
 
@@ -66,9 +62,9 @@ export const update_event_schema = z.object({
     .url("Event image must be a valid URL")
     .optional(),
 
-  event_date: z.string("Event date must be a string").optional(),
+  event_date: z.string().optional(),
 
-  event_time: z.string("Event time must be a string").optional(),
+  event_time: z.string().optional(),
 
   event_venue: z
     .string()
@@ -93,6 +89,8 @@ export const update_event_schema = z.object({
       return val;
     }, z.boolean())
     .optional(),
+
+  category_id: z.string().optional(),
 
   registration_fee: registrationFeeSchema,
 });

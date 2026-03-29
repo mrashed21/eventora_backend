@@ -1,12 +1,11 @@
 model EventParticipant {
-  id              String        @id @default(uuid(7))
-  event_id        String
-  participant_id  String
+  id             String   @id @default(uuid(7))
+  event_id       String
+  participant_id String
+  registered_at  DateTime @default(now())
 
-  registered_at   DateTime      @default(now())
-
-  event           Event         @relation(fields: [event_id], references: [id], onDelete: Cascade)
-  participant     Participants  @relation(fields: [participant_id], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [participant_id], references: [id], onDelete: Cascade)
 
   @@unique([event_id, participant_id], name: "unique_event_participant")
   @@index([event_id], map: "idx_event_participant_event_id")

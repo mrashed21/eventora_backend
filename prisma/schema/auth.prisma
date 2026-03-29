@@ -1,68 +1,70 @@
 model User {
-    id                   String        @id
-    name                 String
-    email                String        @unique
-    createdAt            DateTime      @default(now()) @map("created_at")
-    deletedAt            DateTime?     @map("deleted_at")
-    emailVerified        Boolean       @default(false) @map("email_verified")
-    is_deleted           Boolean       @default(false)
-    need_password_change Boolean       @default(true) @map("need_password_change")
-    updatedAt            DateTime      @updatedAt @map("updated_at")
-    image                String?       @map("user_image")
-    user_role            user_role     @default(user)
-    user_status          user_status   @default(active)
-    accounts             Account[]
-    admin                Admin?
-    participants         Participants?
-    events               Event[]
-    sessions             Session[]
+  id                   String      @id
+  name                 String
+  email                String      @unique
+  createdAt            DateTime    @default(now()) @map("created_at")
+  deletedAt            DateTime?   @map("deleted_at")
+  emailVerified        Boolean     @default(false) @map("email_verified")
+  is_deleted           Boolean     @default(false)
+  need_password_change Boolean     @default(true) @map("need_password_change")
+  updatedAt            DateTime    @updatedAt @map("updated_at")
+  image                String?     @map("user_image")
+  user_role            user_role   @default(user)
+  user_status          user_status @default(active)
 
-    @@map("user")
+  accounts     Account[]
+  admin        Admin?
+  organizers   Organizer?
+  events       Event[]
+  participants EventParticipant[]
+  sessions     Session[]
+
+  @@map("user")
 }
 
 model Session {
-    id        String   @id @default(cuid())
-    token     String   @unique
-    createdAt DateTime @default(now()) @map("created_at")
-    expiresAt DateTime @map("expires_at")
-    ipAddress String?  @map("ip_address")
-    updatedAt DateTime @updatedAt @map("updated_at")
-    userAgent String?  @map("user_agent")
-    userId    String   @map("user_id")
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  token     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  expiresAt DateTime @map("expires_at")
+  ipAddress String?  @map("ip_address")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  userAgent String?  @map("user_agent")
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@index([userId])
-    @@map("session")
+  @@index([userId])
+  @@map("session")
 }
 
 model Account {
-    id                    String    @id @default(cuid())
-    providerId            String
-    scope                 String?
-    password              String?
-    accessToken           String?   @map("access_token")
-    accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
-    accountId             String    @map("account_id")
-    createdAt             DateTime  @default(now()) @map("created_at")
-    idToken               String?   @map("id_token")
-    refreshToken          String?   @map("refresh_token")
-    refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
-    updatedAt             DateTime  @updatedAt @map("updated_at")
-    userId                String    @map("user_id")
-    user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                    String    @id @default(cuid())
+  providerId            String
+  scope                 String?
+  password              String?
+  accessToken           String?   @map("access_token")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+  accountId             String    @map("account_id")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  idToken               String?   @map("id_token")
+  refreshToken          String?   @map("refresh_token")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+  userId                String    @map("user_id")
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@index([userId])
-    @@map("account")
+  @@index([userId])
+  @@map("account")
 }
 
 model Verification {
-    id         String   @id @default(cuid())
-    identifier String
-    value      String
-    createdAt  DateTime @default(now()) @map("created_at")
-    expiresAt  DateTime @map("expires_at")
-    updatedAt  DateTime @updatedAt @map("updated_at")
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  createdAt  DateTime @default(now()) @map("created_at")
+  expiresAt  DateTime @map("expires_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
-    @@index([identifier])
-    @@map("verification")
+  @@index([identifier])
+  @@map("verification")
 }

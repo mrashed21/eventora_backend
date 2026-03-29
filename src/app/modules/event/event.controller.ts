@@ -14,8 +14,10 @@ export const event_controller = {
     if (req.file?.path) {
       payload.event_image = req.file.path;
     }
+
     const user_id = req.user.id;
     const result = await event_service.create(payload, user_id as string);
+
     send_response(res, {
       statusCode: status.CREATED,
       success: true,
@@ -24,21 +26,25 @@ export const event_controller = {
     });
   }),
 
-  // !update
+  // ! update
   update: catch_async(async (req: Request, res: Response) => {
     const user_id = req.user.id;
     const id = req.params.id;
+
     const payload: any = {
       ...req.body,
     };
+
     if (req.file?.path) {
       payload.event_image = req.file.path;
     }
+
     const result = await event_service.update(
       id as string,
       payload,
       user_id as string,
     );
+
     send_response(res, {
       statusCode: status.OK,
       success: true,
@@ -47,11 +53,13 @@ export const event_controller = {
     });
   }),
 
-  //   !delete
+  // ! delete
   delete: catch_async(async (req: Request, res: Response) => {
     const user_id = req.user.id;
     const id = req.params.id;
+
     await event_service.delete(id as string, user_id as string);
+
     send_response(res, {
       statusCode: status.OK,
       success: true,
@@ -60,9 +68,10 @@ export const event_controller = {
     });
   }),
 
-  //   ! public
+  // ! public
   get: catch_async(async (req: Request, res: Response) => {
     const result = await event_service.get(req.query);
+
     send_response(res, {
       statusCode: status.OK,
       success: true,
@@ -75,6 +84,7 @@ export const event_controller = {
   get_by_id: catch_async(async (req: Request, res: Response) => {
     const id = req.params.id;
     const result = await event_service.get_details(id as string);
+
     send_response(res, {
       statusCode: status.OK,
       success: true,
@@ -90,6 +100,7 @@ export const event_controller = {
       user_id as string,
       req.query,
     );
+
     send_response(res, {
       statusCode: status.OK,
       success: true,
@@ -98,7 +109,7 @@ export const event_controller = {
     });
   }),
 
-  //   !admin get
+  // ! admin get
   get_admin: catch_async(async (req: Request, res: Response) => {
     const user_id = req.user.id;
     const result = await event_service.get_admin(req.query, user_id as string);
@@ -111,9 +122,10 @@ export const event_controller = {
     });
   }),
 
-  // ! featured events for home page
-  get_featured: catch_async(async (req: Request, res: Response) => {
+  // ! featured events
+  get_featured: catch_async(async (_req: Request, res: Response) => {
     const result = await event_service.get_featured();
+
     send_response(res, {
       statusCode: status.OK,
       success: true,
@@ -122,9 +134,10 @@ export const event_controller = {
     });
   }),
 
-  // !upcoming events for home page
-  get_upcoming: catch_async(async (req: Request, res: Response) => {
+  // ! upcoming events
+  get_upcoming: catch_async(async (_req: Request, res: Response) => {
     const result = await event_service.get_upcoming();
+
     send_response(res, {
       statusCode: status.OK,
       success: true,

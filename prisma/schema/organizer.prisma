@@ -1,4 +1,4 @@
-model Participants {
+model Organizer {
   id             String    @id @default(uuid(7))
   user_id        String    @unique
   contact_number String?
@@ -10,9 +10,11 @@ model Participants {
   user_address   String?
   user_email     String    @unique
   user_name      String
-  user           User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
- events           EventParticipant[]
-  @@index([user_email], map: "idx_participants_user_email")
-  @@index([is_deleted], map: "idx_participants_is_deleted")
-  @@map("participants")
+
+  user   User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  events Event[] @relation("EventOrganizers")
+
+  @@index([user_email], map: "idx_organizers_user_email")
+  @@index([is_deleted], map: "idx_organizers_is_deleted")
+  @@map("organizers")
 }

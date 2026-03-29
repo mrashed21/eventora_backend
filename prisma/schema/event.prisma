@@ -1,28 +1,32 @@
 model Event {
-    id                String       @id @default(uuid(7))
-    event_title       String
-    event_image       String?
-    event_date        DateTime
-    event_time        String
-    event_venue       String
-    event_description String
-    event_status      event_status @default(active)
-    is_featured       Boolean      @default(false)
-    registration_fee  Float?
-    user_id           String
-    category_id       String
+  id                String       @id @default(uuid(7))
+  event_title       String
+  event_image       String?
+  event_date        DateTime
+  event_time        String
+  event_venue       String
+  event_description String
+  event_status      event_status @default(active)
+  is_featured       Boolean      @default(false)
+  registration_fee  Float?
 
-    user         User               @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    category     Categories         @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    participants EventParticipant[]
+  organizer_id String
+  category_id  String
+  userId       String?
 
-    created_at DateTime @default(now())
-    updated_at DateTime @updatedAt
+  category     Categories         @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  organizer    Organizer          @relation("EventOrganizers", fields: [organizer_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user         User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
+  participants EventParticipant[]
 
-    @@index([user_id], name: "idx_event_user_id")
-    @@index([event_date], name: "idx_event_date")
-    @@index([event_title], name: "idx_event_title")
-    @@index([event_status], name: "idx_event_status")
-    @@index([event_venue], name: "idx_event_venue")
-    @@index([category_id], name: "idx_event_category_id")
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([organizer_id], name: "idx_event_organizer_id")
+  @@index([event_date], name: "idx_event_date")
+  @@index([event_title], name: "idx_event_title")
+  @@index([event_status], name: "idx_event_status")
+  @@index([event_venue], name: "idx_event_venue")
+  @@index([category_id], name: "idx_event_category_id")
+  @@map("events")
 }

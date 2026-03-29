@@ -8,10 +8,33 @@ import { buildSearchConditions } from "../../utils/search";
 export const event_service = {
   // ! create
   create: async (payload: any, user_id: string) => {
-    const { event_type, event_date, event_time, ...rest } = payload;
+    const { event_date, event_time, ...rest } = payload;
 
     if (!payload.category_id) {
       throw new api_error(status.BAD_REQUEST, "Category ID is required");
+    }
+
+    const organizer = await prisma.organizer.findUnique({
+      where: {
+        user_id,
+      },
+    });
+
+    if (!organizer) {
+      throw new api_error(
+        status.BAD_REQUEST,
+        "Organizer profile not found for this user",
+      );
+    }
+
+    const category = await prisma.categories.findUnique({
+      where: {
+        id: payload.category_id,
+      },
+    });
+
+    if (!category) {
+      throw new api_error(status.NOT_FOUND, "Category not found");
     }
 
     const eventDateTime = buildEventDateTime(event_date, event_time);
@@ -19,10 +42,20 @@ export const event_service = {
     const result = await prisma.event.create({
       data: {
         ...rest,
-        user_id,
-        event_type: event_type ?? "public",
+        userId: user_id,
+        organizer_id: organizer.id,
         event_date: eventDateTime,
-        event_time: event_time,
+        event_time,
+      },
+      include: {
+        category: true,
+        organizer: true,
+        user: true,
+        _count: {
+          select: {
+            participants: true,
+          },
+        },
       },
     });
 
@@ -31,18 +64,36 @@ export const event_service = {
 
   // ! update
   update: async (id: string, payload: any, user_id: string) => {
-    const event = await prisma.event.findUnique({
-      where: { id },
-    });
+    const [event, user] = await Promise.all([
+      prisma.event.findUnique({
+        where: { id },
+      }),
+      prisma.user.findUnique({
+        where: { id: user_id },
+        select: {
+          id: true,
+          user_role: true,
+        },
+      }),
+    ]);
 
     if (!event) {
       throw new api_error(status.NOT_FOUND, "Event not found");
     }
 
-    if (event.user_id !== user_id) {
+    if (!user) {
+      throw new api_error(status.NOT_FOUND, "User not found");
+    }
+
+    const isAdmin =
+      user.user_role === "admin" || user.user_role === "super_admin";
+
+    const isOwner = event.userId === user_id;
+
+    if (!isAdmin && !isOwner) {
       throw new api_error(
         status.FORBIDDEN,
-        "You are not the owner of this event",
+        "You are not allowed to update this event",
       );
     }
 
@@ -66,11 +117,22 @@ export const event_service = {
     if (event_time !== undefined) {
       updateData.event_time = event_time;
     }
+
     if (registration_fee !== undefined) {
       updateData.registration_fee = registration_fee;
     }
 
     if (payload.category_id !== undefined) {
+      const category = await prisma.categories.findUnique({
+        where: {
+          id: payload.category_id,
+        },
+      });
+
+      if (!category) {
+        throw new api_error(status.NOT_FOUND, "Category not found");
+      }
+
       updateData.category_id = payload.category_id;
     }
 
@@ -78,6 +140,9 @@ export const event_service = {
       where: { id },
       data: updateData,
       include: {
+        category: true,
+        organizer: true,
+        user: true,
         _count: {
           select: {
             participants: true,
@@ -115,7 +180,7 @@ export const event_service = {
     const isAdmin =
       user.user_role === "admin" || user.user_role === "super_admin";
 
-    const isOwner = event.user_id === user_id;
+    const isOwner = event.userId === user_id;
 
     if (!isAdmin && !isOwner) {
       throw new api_error(
@@ -135,7 +200,8 @@ export const event_service = {
 
   // ! public get all
   get: async (query: any) => {
-    const { search_term, page, limit } = query;
+    const { search_term, page, limit, category_id, event_status, is_featured } =
+      query;
 
     const {
       skip,
@@ -145,30 +211,30 @@ export const event_service = {
     } = calculatePagination({
       page,
       limit,
+      sortBy: query.sortBy,
+      sortOrder: query.sortOrder,
     });
 
     const searchCondition = buildSearchConditions(search_term, [
       "event_title",
       "event_description",
       "event_venue",
-      "category.category_title",
-      "category.category_type",
     ]);
 
     const whereCondition: any = {
       ...searchCondition,
     };
 
-    if (query.event_status !== undefined) {
-      whereCondition.event_status = query.event_status;
+    if (event_status !== undefined) {
+      whereCondition.event_status = event_status;
     }
 
-    if (query.event_type !== undefined) {
-      whereCondition.event_type = query.event_type;
+    if (category_id !== undefined) {
+      whereCondition.category_id = category_id;
     }
 
-    if (query.is_paid !== undefined) {
-      whereCondition.is_paid = query.is_paid === "true";
+    if (is_featured !== undefined) {
+      whereCondition.is_featured = is_featured === "true";
     }
 
     const [data, total] = await Promise.all([
@@ -181,6 +247,8 @@ export const event_service = {
         },
         include: {
           user: true,
+          organizer: true,
+          category: true,
           _count: {
             select: {
               participants: true,
@@ -210,10 +278,11 @@ export const event_service = {
       where: { id },
       include: {
         user: true,
+        organizer: true,
         category: true,
         participants: {
           include: {
-            participant: true,
+            user: true,
           },
         },
         _count: {
@@ -228,12 +297,17 @@ export const event_service = {
       throw new api_error(status.NOT_FOUND, "Event not found");
     }
 
-    return result;
+    return {
+      ...result,
+      total_joined: result.participants.length,
+      joined_participants: result.participants.map((item) => item.user),
+    };
   },
 
   // ! get by user id
   get_by_user_id: async (user_id: string, query: any) => {
-    const { page, limit, search_term } = query;
+    const { page, limit, search_term, event_status, category_id, is_featured } =
+      query;
 
     const {
       skip,
@@ -243,31 +317,31 @@ export const event_service = {
     } = calculatePagination({
       page,
       limit,
+      sortBy: query.sortBy,
+      sortOrder: query.sortOrder,
     });
 
     const searchCondition = buildSearchConditions(search_term, [
       "event_title",
       "event_description",
       "event_venue",
-      "category.category_title",
-      "category.category_type",
     ]);
 
     const whereCondition: any = {
-      user_id,
+      userId: user_id,
       ...searchCondition,
     };
 
-    if (query.event_status !== undefined) {
-      whereCondition.event_status = query.event_status;
+    if (event_status !== undefined) {
+      whereCondition.event_status = event_status;
     }
 
-    if (query.event_type !== undefined) {
-      whereCondition.event_type = query.event_type;
+    if (category_id !== undefined) {
+      whereCondition.category_id = category_id;
     }
 
-    if (query.is_paid !== undefined) {
-      whereCondition.is_paid = query.is_paid === "true";
+    if (is_featured !== undefined) {
+      whereCondition.is_featured = is_featured === "true";
     }
 
     const [events, total] = await Promise.all([
@@ -280,10 +354,11 @@ export const event_service = {
         },
         include: {
           user: true,
+          organizer: true,
           category: true,
           participants: {
             include: {
-              participant: true,
+              user: true,
             },
           },
           _count: {
@@ -301,7 +376,7 @@ export const event_service = {
     const data = events.map(({ participants, ...event }) => ({
       ...event,
       total_joined: participants.length,
-      joined_participants: participants.map((item) => item.participant),
+      joined_participants: participants.map((item) => item.user),
     }));
 
     return {
@@ -331,7 +406,8 @@ export const event_service = {
       );
     }
 
-    const { search_term, page, limit } = query;
+    const { search_term, page, limit, category_id, event_status, is_featured } =
+      query;
 
     const {
       skip,
@@ -341,30 +417,30 @@ export const event_service = {
     } = calculatePagination({
       page,
       limit,
+      sortBy: query.sortBy,
+      sortOrder: query.sortOrder,
     });
 
     const searchCondition = buildSearchConditions(search_term, [
       "event_title",
       "event_description",
       "event_venue",
-      "category.category_title",
-      "category.category_type",
     ]);
 
     const whereCondition: any = {
       ...searchCondition,
     };
 
-    if (query.event_status !== undefined) {
-      whereCondition.event_status = query.event_status;
+    if (event_status !== undefined) {
+      whereCondition.event_status = event_status;
     }
 
-    if (query.event_type !== undefined) {
-      whereCondition.event_type = query.event_type;
+    if (category_id !== undefined) {
+      whereCondition.category_id = category_id;
     }
 
-    if (query.is_paid !== undefined) {
-      whereCondition.is_paid = query.is_paid === "true";
+    if (is_featured !== undefined) {
+      whereCondition.is_featured = is_featured === "true";
     }
 
     const [events, total] = await Promise.all([
@@ -377,10 +453,11 @@ export const event_service = {
         },
         include: {
           user: true,
+          organizer: true,
           category: true,
           participants: {
             include: {
-              participant: true,
+              user: true,
             },
           },
           _count: {
@@ -398,7 +475,7 @@ export const event_service = {
     const data = events.map(({ participants, ...event }) => ({
       ...event,
       total_joined: participants.length,
-      joined_participants: participants.map((item) => item.participant),
+      joined_participants: participants.map((item) => item.user),
     }));
 
     return {
@@ -412,18 +489,23 @@ export const event_service = {
     };
   },
 
-  // ! get feturead events
+  // ! featured events
   get_featured: async () => {
     const result = await prisma.event.findMany({
       where: {
         is_featured: true,
+        event_status: "active",
+      },
+      orderBy: {
+        event_date: "asc",
       },
       include: {
         user: true,
+        organizer: true,
         category: true,
         participants: {
           include: {
-            participant: true,
+            user: true,
           },
         },
         _count: {
@@ -434,10 +516,14 @@ export const event_service = {
       },
     });
 
-    return result;
+    return result.map(({ participants, ...event }) => ({
+      ...event,
+      total_joined: participants.length,
+      joined_participants: participants.map((item) => item.user),
+    }));
   },
 
-  // ! upcoming events (9)
+  // ! upcoming events
   get_upcoming: async () => {
     const now = new Date();
 
@@ -454,10 +540,11 @@ export const event_service = {
       take: 9,
       include: {
         user: true,
+        organizer: true,
         category: true,
         participants: {
           include: {
-            participant: true,
+            user: true,
           },
         },
         _count: {
@@ -468,6 +555,10 @@ export const event_service = {
       },
     });
 
-    return result;
+    return result.map(({ participants, ...event }) => ({
+      ...event,
+      total_joined: participants.length,
+      joined_participants: participants.map((item) => item.user),
+    }));
   },
 };

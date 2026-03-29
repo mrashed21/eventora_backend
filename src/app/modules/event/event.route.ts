@@ -5,15 +5,16 @@ import { check_auth } from "../../middleware/check-auth";
 import { validate_request } from "../../middleware/validate-request";
 import { event_controller } from "./event.controller";
 import { create_event_schema, update_event_schema } from "./event.validation";
+
 const router = express.Router();
 
 // ! featured events
 router.route("/featured").get(event_controller.get_featured);
+
 // ! upcoming events
 router.route("/upcoming").get(event_controller.get_upcoming);
 
 // ! public
-
 router
   .route("/")
   .get(event_controller.get)
@@ -24,7 +25,7 @@ router
     event_controller.create,
   );
 
-//   !admin get
+// ! admin get
 router
   .route("/admin")
   .get(
@@ -32,7 +33,7 @@ router
     event_controller.get_admin,
   );
 
-// !get for user
+// ! get for logged in user
 router
   .route("/user")
   .get(

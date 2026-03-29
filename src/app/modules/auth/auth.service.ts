@@ -37,8 +37,8 @@ export const auth_service = {
     }
 
     try {
-      const participant = await prisma.$transaction(async (tx) => {
-        const participant_tx = await tx.participants.create({
+      const organizer = await prisma.$transaction(async (tx) => {
+        const organizer_tx = await tx.organizer.create({
           data: {
             user_id: result.user.id,
             user_name: user_name,
@@ -46,7 +46,7 @@ export const auth_service = {
           },
         });
 
-        return participant_tx;
+        return organizer_tx;
       });
 
       const access_token = token_utils.create.access({
@@ -71,14 +71,14 @@ export const auth_service = {
 
       return {
         ...result.user,
-        participant: participant,
+        organizer: organizer,
         access_token,
         refresh_token,
         token: result.token,
       };
     } catch (error) {
       console.log("Transaction error : ", error);
-      await prisma.participants.deleteMany({
+      await prisma.organizer.deleteMany({
         where: {
           user_id: result.user.id,
         },
@@ -167,7 +167,7 @@ export const auth_service = {
         id: user_id,
       },
       include: {
-        participants: true,
+        organizers: true,
 
         admin: true,
       },
@@ -430,14 +430,14 @@ export const auth_service = {
   // ! google login
 
   google_login: async (session: Record<string, any>) => {
-    const is_participant = await prisma.participants.findUnique({
+    const is_participant = await prisma.organizer.findUnique({
       where: {
         user_id: session.user.id,
       },
     });
 
     if (!is_participant) {
-      await prisma.participants.create({
+      await prisma.organizer.create({
         data: {
           user_id: session.user.id,
           user_name: session.user.name,
@@ -445,18 +445,6 @@ export const auth_service = {
         },
       });
     }
-
-    // const access_token = token_utils.create.access({
-    //   id: session.user.id,
-    //   user_role: session.user.role,
-    //   user_name: session.user.name,
-    // });
-
-    // const refresh_token = token_utils.create.refresh({
-    //   userId: session.user.id,
-    //   role: session.user.role,
-    //   name: session.user.name,
-    // });
 
     const access_token = token_utils.create.access({
       id: session.user.id,
