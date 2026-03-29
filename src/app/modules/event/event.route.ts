@@ -7,11 +7,16 @@ import { event_controller } from "./event.controller";
 import { create_event_schema, update_event_schema } from "./event.validation";
 const router = express.Router();
 
+// ! featured events
+router.route("/featured").get(event_controller.get_featured);
+// ! upcoming events
+router.route("/upcoming").get(event_controller.get_upcoming);
+
 // ! public
 
 router
   .route("/")
-  .get(event_controller.get_admin)
+  .get(event_controller.get)
   .post(
     check_auth(user_role.user, user_role.admin, user_role.super_admin),
     multer_upload.single("file"),
@@ -37,7 +42,7 @@ router
 
 router
   .route("/:id")
-  .get(event_controller.create)
+  .get(event_controller.get_by_id)
   .patch(
     check_auth(user_role.user, user_role.admin, user_role.super_admin),
     multer_upload.single("file"),

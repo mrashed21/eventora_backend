@@ -119,6 +119,13 @@ export const update_event_schema = z
     event_type: z.enum(["public", "private"]).optional(),
 
     is_paid: isPaidSchema.optional(),
+    is_featured: z
+      .preprocess((val) => {
+        if (val === "true") return true;
+        if (val === "false") return false;
+        return val;
+      }, z.boolean())
+      .optional(),
 
     registration_fee: registrationFeeSchema,
   })

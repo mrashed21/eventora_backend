@@ -81,7 +81,6 @@ export const event_controller = {
   // ! get by user id
   get_by_user_id: catch_async(async (req: Request, res: Response) => {
     const user_id = req.user.id;
-    console.log("req.user: ", req.user);
     const result = await event_service.get_by_user_id(
       user_id as string,
       req.query,
@@ -103,6 +102,28 @@ export const event_controller = {
       statusCode: status.OK,
       success: true,
       message: "Events fetched successfully",
+      data: result,
+    });
+  }),
+
+  // ! featured events for home page
+  get_featured: catch_async(async (req: Request, res: Response) => {
+    const result = await event_service.get_featured();
+    send_response(res, {
+      statusCode: status.OK,
+      success: true,
+      message: "Featured events fetched successfully",
+      data: result,
+    });
+  }),
+
+  // !upcoming events for home page
+  get_upcoming: catch_async(async (req: Request, res: Response) => {
+    const result = await event_service.get_upcoming();
+    send_response(res, {
+      statusCode: status.OK,
+      success: true,
+      message: "Upcoming events fetched successfully",
       data: result,
     });
   }),

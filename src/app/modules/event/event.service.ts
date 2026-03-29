@@ -1,6 +1,7 @@
 import status from "http-status";
 import api_error from "../../error-helper/api-error";
 import { prisma } from "../../lib/prisma";
+import { buildEventDateTime } from "../../utils/date-format";
 import { calculatePagination } from "../../utils/pagination";
 import { buildSearchConditions } from "../../utils/search";
 
@@ -17,6 +18,7 @@ export const event_service = {
     } = payload;
 
     const finalIsPaid = is_paid ?? false;
+    const eventDateTime = buildEventDateTime(event_date, event_time);
 
     const finalRegistrationFee = finalIsPaid
       ? Number(registration_fee ?? 0)
@@ -29,7 +31,7 @@ export const event_service = {
         event_type: event_type ?? "public",
         is_paid: finalIsPaid,
         registration_fee: finalRegistrationFee,
-        event_date: event_date,
+        event_date: eventDateTime,
         event_time: event_time,
       },
     });
@@ -71,8 +73,15 @@ export const event_service = {
       updateData.event_type = event_type;
     }
 
-    if (event_date !== undefined) {
-      updateData.event_date = event_date;
+    if (event_date !== undefined || event_time !== undefined) {
+      const finalDate =
+        event_date !== undefined
+          ? event_date
+          : event.event_date.toISOString().split("T")[0];
+
+      const finalTime = event_time ?? event.event_time;
+
+      updateData.event_date = buildEventDateTime(finalDate, finalTime);
     }
 
     if (event_time !== undefined) {
@@ -423,6 +432,39 @@ export const event_service = {
       where: {
         is_featured: true,
       },
+      include: {
+        user: true,
+        participants: {
+          include: {
+            participant: true,
+          },
+        },
+        _count: {
+          select: {
+            participants: true,
+          },
+        },
+      },
+    });
+
+    return result;
+  },
+
+  // ! upcoming events (9)
+  get_upcoming: async () => {
+    const now = new Date();
+
+    const result = await prisma.event.findMany({
+      where: {
+        event_date: {
+          gte: now,
+        },
+        event_status: "active",
+      },
+      orderBy: {
+        event_date: "asc",
+      },
+      take: 9,
       include: {
         user: true,
         participants: {

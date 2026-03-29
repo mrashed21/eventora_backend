@@ -2,7 +2,7 @@ model Event {
     id                String       @id @default(uuid(7))
     event_title       String
     event_image       String?
-    event_date        String
+    event_date        DateTime
     event_time        String
     event_venue       String
     event_description String
