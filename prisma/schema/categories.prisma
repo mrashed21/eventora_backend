@@ -1,12 +1,16 @@
 model Categories {
     id                   String          @id @default(uuid(7))
-    category_type        String
+    category_title       String
+    category_type        category_type   @default(public)
+    is_paid              Boolean         @default(false)
+    category_image       String?
     category_description String?
     category_status      category_status @default(active)
-    is_paid              Boolean         @default(true)
     created_at           DateTime        @default(now())
     updated_at           DateTime        @updatedAt
+    events               Event[]
 
+    @@index([category_title], name: "idx_categories_title")
     @@index([category_type], name: "idx_categories_type")
     @@index([category_status], name: "idx_categories_status")
     @@index([is_paid], name: "idx_categories_is_paid")

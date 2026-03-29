@@ -7,7 +7,14 @@ import { category_service } from "./category.service";
 export const category_controller = {
   // ! create
   create: catch_async(async (req: Request, res: Response) => {
-    const result = await category_service.create(req.body);
+    const payload: any = {
+      ...req.body,
+    };
+
+    if (req.file?.path) {
+      payload.category_image = req.file.path;
+    }
+    const result = await category_service.create(payload);
 
     send_response(res, {
       statusCode: status.CREATED,
@@ -20,7 +27,14 @@ export const category_controller = {
   // ! update
   update: catch_async(async (req: Request, res: Response) => {
     const id = req.params.id;
-    const result = await category_service.update(id as string, req.body);
+    const payload: any = {
+      ...req.body,
+    };
+
+    if (req.file?.path) {
+      payload.category_image = req.file.path;
+    }
+    const result = await category_service.update(id as string, payload);
 
     send_response(res, {
       statusCode: status.OK,

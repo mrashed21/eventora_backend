@@ -1,6 +1,7 @@
 import express from "express";
 // import { user_role } from "../../../generated/prisma/enums";
 import { user_role } from "@prisma/client";
+import { multer_upload } from "../../config/multer";
 import { check_auth } from "../../middleware/check-auth";
 import { validate_request } from "../../middleware/validate-request";
 import { category_controller } from "./category.controller";
@@ -23,6 +24,7 @@ router
   .get(category_controller.get)
   .post(
     check_auth(user_role.admin, user_role.super_admin),
+    multer_upload.single("category_image"),
     validate_request(create_category_schema),
     category_controller.create,
   );
@@ -31,6 +33,7 @@ router
   .route("/:id")
   .patch(
     check_auth(user_role.admin, user_role.super_admin),
+    multer_upload.single("category_image"),
     validate_request(update_category_schema),
     category_controller.update,
   )

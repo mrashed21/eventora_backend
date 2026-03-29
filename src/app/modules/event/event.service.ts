@@ -8,29 +8,19 @@ import { buildSearchConditions } from "../../utils/search";
 export const event_service = {
   // ! create
   create: async (payload: any, user_id: string) => {
-    const {
-      is_paid,
-      registration_fee,
-      event_type,
-      event_date,
-      event_time,
-      ...rest
-    } = payload;
+    const { event_type, event_date, event_time, ...rest } = payload;
 
-    const finalIsPaid = is_paid ?? false;
+    if (!payload.category_id) {
+      throw new api_error(status.BAD_REQUEST, "Category ID is required");
+    }
+
     const eventDateTime = buildEventDateTime(event_date, event_time);
-
-    const finalRegistrationFee = finalIsPaid
-      ? Number(registration_fee ?? 0)
-      : null;
 
     const result = await prisma.event.create({
       data: {
         ...rest,
         user_id,
         event_type: event_type ?? "public",
-        is_paid: finalIsPaid,
-        registration_fee: finalRegistrationFee,
         event_date: eventDateTime,
         event_time: event_time,
       },
@@ -56,22 +46,11 @@ export const event_service = {
       );
     }
 
-    const {
-      is_paid,
-      registration_fee,
-      event_type,
-      event_date,
-      event_time,
-      ...rest
-    } = payload;
+    const { registration_fee, event_date, event_time, ...rest } = payload;
 
     const updateData: any = {
       ...rest,
     };
-
-    if (event_type !== undefined) {
-      updateData.event_type = event_type;
-    }
 
     if (event_date !== undefined || event_time !== undefined) {
       const finalDate =
@@ -87,14 +66,12 @@ export const event_service = {
     if (event_time !== undefined) {
       updateData.event_time = event_time;
     }
+    if (registration_fee !== undefined) {
+      updateData.registration_fee = registration_fee;
+    }
 
-    if (is_paid !== undefined) {
-      updateData.is_paid = is_paid;
-      updateData.registration_fee = is_paid
-        ? Number(registration_fee ?? event.registration_fee ?? 0)
-        : null;
-    } else if (registration_fee !== undefined) {
-      updateData.registration_fee = Number(registration_fee);
+    if (payload.category_id !== undefined) {
+      updateData.category_id = payload.category_id;
     }
 
     const updatedEvent = await prisma.event.update({
@@ -174,6 +151,8 @@ export const event_service = {
       "event_title",
       "event_description",
       "event_venue",
+      "category.category_title",
+      "category.category_type",
     ]);
 
     const whereCondition: any = {
@@ -231,6 +210,7 @@ export const event_service = {
       where: { id },
       include: {
         user: true,
+        category: true,
         participants: {
           include: {
             participant: true,
@@ -269,6 +249,8 @@ export const event_service = {
       "event_title",
       "event_description",
       "event_venue",
+      "category.category_title",
+      "category.category_type",
     ]);
 
     const whereCondition: any = {
@@ -298,6 +280,7 @@ export const event_service = {
         },
         include: {
           user: true,
+          category: true,
           participants: {
             include: {
               participant: true,
@@ -364,6 +347,8 @@ export const event_service = {
       "event_title",
       "event_description",
       "event_venue",
+      "category.category_title",
+      "category.category_type",
     ]);
 
     const whereCondition: any = {
@@ -392,6 +377,7 @@ export const event_service = {
         },
         include: {
           user: true,
+          category: true,
           participants: {
             include: {
               participant: true,
@@ -434,6 +420,7 @@ export const event_service = {
       },
       include: {
         user: true,
+        category: true,
         participants: {
           include: {
             participant: true,
@@ -467,6 +454,7 @@ export const event_service = {
       take: 9,
       include: {
         user: true,
+        category: true,
         participants: {
           include: {
             participant: true,

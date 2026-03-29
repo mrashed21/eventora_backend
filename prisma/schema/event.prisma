@@ -7,13 +7,13 @@ model Event {
     event_venue       String
     event_description String
     event_status      event_status @default(active)
-    event_type        event_type   @default(public)
-    is_paid           Boolean      @default(false)
     is_featured       Boolean      @default(false)
     registration_fee  Float?
     user_id           String
+    category_id       String
 
     user         User               @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    category     Categories         @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
     participants EventParticipant[]
 
     created_at DateTime @default(now())
@@ -24,6 +24,5 @@ model Event {
     @@index([event_title], name: "idx_event_title")
     @@index([event_status], name: "idx_event_status")
     @@index([event_venue], name: "idx_event_venue")
-    @@index([is_paid], name: "idx_event_is_paid")
-    @@index([event_type], name: "idx_event_type")
+    @@index([category_id], name: "idx_event_category_id")
 }

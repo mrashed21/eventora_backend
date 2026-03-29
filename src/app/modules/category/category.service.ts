@@ -9,10 +9,12 @@ export const category_service = {
   create: async (payload: any) => {
     const result = await prisma.categories.create({
       data: {
+        category_title: payload.category_title,
         category_type: payload.category_type,
-        category_description: payload.category_description,
+        category_description: payload.category_description || null,
         category_status: payload.category_status,
-        is_paid: payload.is_paid ?? true,
+        is_paid: payload.is_paid ?? false,
+        category_image: payload.category_image,
       },
     });
 
@@ -30,12 +32,20 @@ export const category_service = {
     }
     const updateData: any = {};
 
+    if (payload.category_title !== undefined) {
+      updateData.category_title = payload.category_title;
+    }
+
+    if (payload.category_image !== undefined) {
+      updateData.category_image = payload.category_image;
+    }
+
     if (payload.category_type !== undefined) {
       updateData.category_type = payload.category_type;
     }
 
     if (payload.category_description !== undefined) {
-      updateData.category_description = payload.category_description;
+      updateData.category_description = payload.category_description || null;
     }
 
     if (payload.category_status !== undefined) {
@@ -58,10 +68,22 @@ export const category_service = {
   delete: async (id: string) => {
     const category = await prisma.categories.findUnique({
       where: { id },
+      include: {
+        events: {
+          select: { id: true },
+          take: 1,
+        },
+      },
     });
 
     if (!category) {
       throw new api_error(status.NOT_FOUND, "Category not found");
+    }
+    if (category.events.length > 0) {
+      throw new api_error(
+        status.BAD_REQUEST,
+        "This category cannot be deleted because it has related events",
+      );
     }
 
     const result = await prisma.categories.delete({
@@ -94,8 +116,10 @@ export const category_service = {
     });
 
     const searchCondition = buildSearchConditions(search_term, [
+      "category_title",
       "category_type",
       "category_description",
+      "is_paid",
     ]);
 
     const whereCondition: any = {
@@ -104,6 +128,14 @@ export const category_service = {
 
     if (query.category_status !== undefined) {
       whereCondition.category_status = query.category_status;
+    }
+
+    if (query.category_type !== undefined) {
+      whereCondition.category_type = query.category_type;
+    }
+
+    if (query.is_paid !== undefined) {
+      whereCondition.is_paid = query.is_paid === "true";
     }
 
     const [data, total] = await Promise.all([

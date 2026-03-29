@@ -7,10 +7,13 @@ import { event_service } from "./event.service";
 export const event_controller = {
   // ! create
   create: catch_async(async (req: Request, res: Response) => {
-    const payload = {
+    const payload: any = {
       ...req.body,
-      event_image: req.file?.path,
     };
+
+    if (req.file?.path) {
+      payload.event_image = req.file.path;
+    }
     const user_id = req.user.id;
     const result = await event_service.create(payload, user_id as string);
     send_response(res, {
@@ -25,10 +28,12 @@ export const event_controller = {
   update: catch_async(async (req: Request, res: Response) => {
     const user_id = req.user.id;
     const id = req.params.id;
-    const payload = {
+    const payload: any = {
       ...req.body,
-      event_image: req.file?.path,
     };
+    if (req.file?.path) {
+      payload.event_image = req.file.path;
+    }
     const result = await event_service.update(
       id as string,
       payload,

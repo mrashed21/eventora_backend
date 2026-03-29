@@ -35,3 +35,8 @@ enum event_type {
   public
   private
 }
+
+enum category_type {
+  public
+  private
+}
