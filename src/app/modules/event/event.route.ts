@@ -20,7 +20,7 @@ router
   .get(event_controller.get)
   .post(
     check_auth(user_role.user, user_role.admin, user_role.super_admin),
-    multer_upload.single("file"),
+    multer_upload.single("event_image"),
     validate_request(create_event_schema),
     event_controller.create,
   );
@@ -46,7 +46,7 @@ router
   .get(event_controller.get_by_id)
   .patch(
     check_auth(user_role.user, user_role.admin, user_role.super_admin),
-    multer_upload.single("file"),
+    multer_upload.single("event_image"),
     validate_request(update_event_schema),
     event_controller.update,
   )

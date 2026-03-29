@@ -7,16 +7,20 @@ import { buildSearchConditions } from "../../utils/search";
 
 export const event_service = {
   // ! create
-  create: async (payload: any, user_id: string) => {
-    const { event_date, event_time, ...rest } = payload;
+  create: async (payload: any) => {
+    const { event_date, event_time, user_id, ...rest } = payload;
 
     if (!payload.category_id) {
       throw new api_error(status.BAD_REQUEST, "Category ID is required");
     }
 
+    if (!user_id) {
+      throw new api_error(status.UNAUTHORIZED, "User ID is required");
+    }
+
     const organizer = await prisma.organizer.findUnique({
       where: {
-        user_id,
+        user_id: user_id,
       },
     });
 

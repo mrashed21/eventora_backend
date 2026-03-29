@@ -7,6 +7,7 @@ import { buildSearchConditions } from "../../utils/search";
 export const category_service = {
   // ! create
   create: async (payload: any) => {
+    console.log("payload: ", payload);
     const result = await prisma.categories.create({
       data: {
         category_title: payload.category_title,

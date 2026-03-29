@@ -9,14 +9,14 @@ export const event_controller = {
   create: catch_async(async (req: Request, res: Response) => {
     const payload: any = {
       ...req.body,
+      user_id: req.user.id,
     };
 
     if (req.file?.path) {
       payload.event_image = req.file.path;
     }
 
-    const user_id = req.user.id;
-    const result = await event_service.create(payload, user_id as string);
+    const result = await event_service.create(payload);
 
     send_response(res, {
       statusCode: status.CREATED,
