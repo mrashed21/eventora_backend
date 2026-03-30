@@ -3,7 +3,7 @@ import api_error from "../../error-helper/api-error";
 import { prisma } from "../../lib/prisma";
 import { buildEventDateTime } from "../../utils/date-format";
 import { calculatePagination } from "../../utils/pagination";
-import { buildSearchConditions } from "../../utils/search";
+import { buildEventSearch, buildSearchConditions } from "../../utils/search";
 
 export const event_service = {
   // ! create
@@ -219,24 +219,23 @@ export const event_service = {
       sortOrder: query.sortOrder,
     });
 
-    const searchCondition = buildSearchConditions(search_term, [
-      "event_title",
-      "event_description",
-      "event_venue",
-    ]);
+    const searchCondition = buildEventSearch(search_term);
 
     const whereCondition: any = {
       ...searchCondition,
     };
 
+    // filter by event status
     if (event_status !== undefined) {
       whereCondition.event_status = event_status;
     }
 
+    // filter by category id
     if (category_id !== undefined) {
       whereCondition.category_id = category_id;
     }
 
+    // filter by featured
     if (is_featured !== undefined) {
       whereCondition.is_featured = is_featured === "true";
     }
