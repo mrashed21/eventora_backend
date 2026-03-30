@@ -16,6 +16,7 @@ model User {
   admin        Admin?
   organizers   Organizer?
   events       Event[]
+  invitations  Invitation[]
   participants EventParticipant[]
   sessions     Session[]
 

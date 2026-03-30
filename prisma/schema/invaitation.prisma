@@ -3,8 +3,10 @@ model Invitation {
     email      String
     event_id   String
     status     invitation_status @default(pending)
+    user_id    String?
     created_at DateTime          @default(now())
     updated_at DateTime          @updatedAt
 
     event Event @relation(fields: [event_id], references: [id])
+    user  User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
