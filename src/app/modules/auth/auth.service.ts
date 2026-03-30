@@ -1,7 +1,6 @@
+import { user_role, user_status } from "@prisma/client";
 import status from "http-status";
 import { JwtPayload } from "jsonwebtoken";
-// import { user_role, user_status } from "../../../generated/prisma/enums";
-import { user_role, user_status } from "@prisma/client";
 import { config } from "../../config/config";
 import api_error from "../../error-helper/api-error";
 import { auth } from "../../lib/auth";

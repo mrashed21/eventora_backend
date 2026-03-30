@@ -40,3 +40,9 @@ enum category_type {
   public
   private
 }
+
+enum invitation_status {
+  pending
+  accepted
+  rejected
+}

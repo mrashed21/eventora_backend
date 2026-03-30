@@ -1,0 +1,10 @@
+model Invitation {
+    id         String            @id @default(uuid())
+    email      String
+    event_id   String
+    status     invitation_status @default(pending)
+    created_at DateTime          @default(now())
+    updated_at DateTime          @updatedAt
+
+    event Event @relation(fields: [event_id], references: [id])
+}

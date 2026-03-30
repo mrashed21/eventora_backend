@@ -20,7 +20,6 @@ export const user_service = {
     const searchCondition = buildSearchConditions(search_term, [
       "name",
       "email",
-      "user_role",
     ]);
 
     const whereCondition: any = {

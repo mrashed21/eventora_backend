@@ -13,6 +13,7 @@ model Event {
   organizer_id String
   category_id  String
   userId       String?
+  invitations  Invitation[]
 
   category     Categories         @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   organizer    Organizer          @relation("EventOrganizers", fields: [organizer_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
