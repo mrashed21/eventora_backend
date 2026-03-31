@@ -1,0 +1,32 @@
+model EventPayment {
+  id                    String           @id @default(uuid(7))
+  event_id              String
+  user_id               String
+
+  amount                Float
+  currency              String           @default("usd")
+  payment_status        payment_status   @default(pending)
+  payment_provider      payment_provider @default(stripe)
+
+  stripe_session_id     String?          @unique
+  stripe_payment_intent String?          @unique
+  stripe_charge_id      String?
+
+  payment_method        String?
+  paid_at               DateTime?
+  refunded_at           DateTime?
+  refund_amount         Float?
+  metadata              Json?
+
+  created_at            DateTime         @default(now())
+  updated_at            DateTime         @updatedAt
+
+  event                 Event            @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  user                  User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  participants          EventParticipant[]
+
+  @@index([event_id], map: "idx_event_payment_event_id")
+  @@index([user_id], map: "idx_event_payment_user_id")
+  @@index([payment_status], map: "idx_event_payment_status")
+  @@map("event_payments")
+}

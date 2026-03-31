@@ -4,6 +4,7 @@ import { auth_routes } from "../modules/auth/auth.route";
 import { category_routes } from "../modules/category/category.route";
 import { event_routes } from "../modules/event/event.route";
 import { user_routes } from "../modules/user/user.route";
+import { perticipant_routes } from "../modules/perticipant/perticipant.route";
 
 const router = Router();
 
@@ -27,6 +28,10 @@ const moduleRoutes = [
   {
     path: "/user",
     route: user_routes,
+  },
+  {
+    path: "/perticipant",
+    route: perticipant_routes,
   },
 ];
 

@@ -8,6 +8,7 @@ import { config } from "./app/config/config";
 import { auth } from "./app/lib/auth";
 import { global_error_handler } from "./app/middleware/globar-error";
 import { not_found } from "./app/middleware/not-found";
+import { payment_controller } from "./app/modules/payment/payment.controller";
 import router from "./app/routers/router";
 
 const app: Application = express();
@@ -18,10 +19,9 @@ app.set("view engine", "ejs");
 app.set("views", path.resolve(process.cwd(), `src/app/templates`));
 
 app.post(
-  "/webhook",
+  "/api/v1/payments/stripe/webhook",
   express.raw({ type: "application/json" }),
-
-  // PaymentController.handleStripeWebhookEvent
+  (req, res) => payment_controller.webhook(req, res),
 );
 
 app.use(

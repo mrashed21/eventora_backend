@@ -19,6 +19,7 @@ model User {
   invitations  Invitation[]
   participants EventParticipant[]
   sessions     Session[]
+  payments     EventPayment[]
 
   @@map("user")
 }

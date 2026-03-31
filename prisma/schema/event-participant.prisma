@@ -1,14 +1,35 @@
 model EventParticipant {
-  id             String   @id @default(uuid(7))
+  id             String @id @default(uuid(7))
   event_id       String
   participant_id String
-  registered_at  DateTime @default(now())
 
-  event Event @relation(fields: [event_id], references: [id], onDelete: Cascade)
-  user  User  @relation(fields: [participant_id], references: [id], onDelete: Cascade)
+  participation_status participation_status @default(pending)
+  payment_status       payment_status       @default(not_required)
+
+  requested_at DateTime  @default(now())
+  approved_at  DateTime?
+  rejected_at  DateTime?
+  joined_at    DateTime?
+  cancelled_at DateTime?
+
+  approval_note    String?
+  rejection_reason String?
+
+  payment_id            String?
+  stripe_session_id     String?
+  stripe_payment_intent String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  event   Event         @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  user    User          @relation(fields: [participant_id], references: [id], onDelete: Cascade)
+  payment EventPayment? @relation(fields: [payment_id], references: [id], onDelete: SetNull)
 
   @@unique([event_id, participant_id], name: "unique_event_participant")
   @@index([event_id], map: "idx_event_participant_event_id")
   @@index([participant_id], map: "idx_event_participant_participant_id")
+  @@index([participation_status], map: "idx_event_participant_status")
+  @@index([payment_status], map: "idx_event_participant_payment_status")
   @@map("event_participants")
 }
