@@ -204,8 +204,16 @@ export const event_service = {
 
   // ! public get all
   get: async (query: any) => {
-    const { search_term, page, limit, category_id, event_status, is_featured } =
-      query;
+    const {
+      search_term,
+      page,
+      limit,
+      category_id,
+      category_type,
+      event_status,
+      is_featured,
+      is_paid,
+    } = query;
 
     const {
       skip,
@@ -238,6 +246,20 @@ export const event_service = {
     // filter by featured
     if (is_featured !== undefined) {
       whereCondition.is_featured = is_featured === "true";
+    }
+
+    // filter by category_type + is_paid
+    if (category_type !== undefined || is_paid !== undefined) {
+      whereCondition.category = {
+        is: {
+          ...(category_type !== undefined && {
+            category_type,
+          }),
+          ...(is_paid !== undefined && {
+            is_paid: is_paid === "true",
+          }),
+        },
+      };
     }
 
     const [data, total] = await Promise.all([
