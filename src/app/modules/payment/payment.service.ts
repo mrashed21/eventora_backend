@@ -55,8 +55,6 @@ export const payment_service = {
           payment_status: "paid",
           payment_id,
           requested_at: new Date(),
-          approved_at: is_private !== "true" ? new Date() : null,
-          joined_at: is_private !== "true" ? new Date() : null,
         },
       });
     } else {
@@ -66,14 +64,6 @@ export const payment_service = {
           payment_status: "paid",
           payment_id,
           participation_status: is_private === "true" ? "pending" : "approved",
-          approved_at:
-            is_private !== "true"
-              ? existingParticipant.approved_at || new Date()
-              : existingParticipant.approved_at,
-          joined_at:
-            is_private !== "true"
-              ? existingParticipant.joined_at || new Date()
-              : existingParticipant.joined_at,
         },
       });
     }
