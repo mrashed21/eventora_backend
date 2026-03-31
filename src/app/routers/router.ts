@@ -3,8 +3,8 @@ import { admin_routes } from "../modules/admin/admin.route";
 import { auth_routes } from "../modules/auth/auth.route";
 import { category_routes } from "../modules/category/category.route";
 import { event_routes } from "../modules/event/event.route";
-import { user_routes } from "../modules/user/user.route";
 import { perticipant_routes } from "../modules/perticipant/perticipant.route";
+import { user_routes } from "../modules/user/user.route";
 
 const router = Router();
 
@@ -30,7 +30,7 @@ const moduleRoutes = [
     route: user_routes,
   },
   {
-    path: "/perticipant",
+    path: "/participant",
     route: perticipant_routes,
   },
 ];

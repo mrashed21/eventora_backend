@@ -3,6 +3,7 @@ import { config } from "../../config/config";
 import { stripe } from "../../config/stripe";
 import api_error from "../../error-helper/api-error";
 import { prisma } from "../../lib/prisma";
+import { calculatePagination } from "../../utils/pagination";
 
 export const participant_service = {
   register: async (payload: any) => {
@@ -31,7 +32,7 @@ export const participant_service = {
       throw new api_error(status.BAD_REQUEST, "Event already ended");
     }
 
-    // prevent duplicate
+    //! prevent duplicate
     const existing = await prisma.eventParticipant.findUnique({
       where: {
         unique_event_participant: {
@@ -52,9 +53,7 @@ export const participant_service = {
     const isPaid =
       event.category.is_paid || Number(event.registration_fee || 0) > 0;
 
-    // =========================
-    // FREE EVENT
-    // =========================
+    //! FREE EVENT
     if (!isPaid) {
       const participant = await prisma.eventParticipant.create({
         data: {
@@ -75,9 +74,7 @@ export const participant_service = {
       };
     }
 
-    // =========================
-    // PAID EVENT
-    // =========================
+    //! PAID EVENT
 
     const amount = Number(event.registration_fee || 0);
 
@@ -118,8 +115,8 @@ export const participant_service = {
         payment_id: payment.id,
         is_private: isPrivate ? "true" : "false",
       },
-      success_url: `${config.FRONTEND_URL}/success`,
-      cancel_url: `${config.FRONTEND_URL}/cancel`,
+      success_url: `${config.FRONTEND_URL}/payment/success`,
+      cancel_url: `${config.FRONTEND_URL}/payment/cancel`,
     });
 
     await prisma.eventPayment.update({
@@ -180,41 +177,69 @@ export const participant_service = {
     return result;
   },
 
-  get_event_participants: async (event_id: string, user_id: string) => {
-    const event = await prisma.event.findUnique({
-      where: { id: event_id },
-      select: {
-        id: true,
-        userId: true,
-        organizer_id: true,
-      },
+  get_pending_participants: async (query: any, user_id: string) => {
+    const { page, limit } = query;
+    const {
+      skip,
+      limit: take,
+      sortBy,
+      sortOrder,
+    } = calculatePagination({
+      page,
+      limit,
+      sortBy: query.sortBy,
+      sortOrder: query.sortOrder,
+    });
+
+    const organizer = await prisma.organizer.findUnique({
+      where: { user_id: user_id },
+    });
+
+    if (!organizer) {
+      throw new api_error(status.NOT_FOUND, "Organizer not found");
+    }
+    const event = await prisma.event.findMany({
+      where: { organizer_id: organizer.id },
     });
 
     if (!event) {
       throw new api_error(status.NOT_FOUND, "Event not found");
     }
 
-    if (event.userId !== user_id) {
-      throw new api_error(
-        status.FORBIDDEN,
-        "You are not allowed to view participants of this event",
-      );
-    }
+    const [data, total] = await Promise.all([
+      prisma.eventParticipant.findMany({
+        where: {
+          event_id: { in: event.map((e) => e.id) },
+          participation_status: "pending",
+        },
+        skip,
+        take,
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+        include: {
+          user: true,
+          payment: true,
+          event: true,
+        },
+      }),
+      prisma.eventParticipant.count({
+        where: {
+          event_id: { in: event.map((e) => e.id) },
+          participation_status: "pending",
+        },
+      }),
+    ]);
 
-    const result = await prisma.eventParticipant.findMany({
-      where: {
-        event_id,
+    return {
+      meta: {
+        page: Number(page) || 1,
+        limit: take,
+        total,
+        totalPage: Math.ceil(total / take),
       },
-      include: {
-        user: true,
-        payment: true,
-      },
-      orderBy: {
-        created_at: "desc",
-      },
-    });
-
-    return result;
+      data,
+    };
   },
 
   approve_participant: async (

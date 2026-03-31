@@ -47,9 +47,9 @@ export const perticipant_controller = {
     });
   }),
 
-  get_event_participants: catch_async(async (req, res) => {
-    const result = await participant_service.get_event_participants(
-      req.params.event_id as string,
+  get_pending_participants: catch_async(async (req, res) => {
+    const result = await participant_service.get_pending_participants(
+      req.query,
       req.user.id,
     );
 
