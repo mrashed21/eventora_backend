@@ -21,22 +21,17 @@ router.get(
 );
 
 // organizer approve / reject
-router.get(
-  "/pending",
-  check_auth(user_role.user),
-  perticipant_controller.get_pending_participants,
-);
-
-router.patch(
-  "/event/:event_id/:participant_id/approve",
-  check_auth(user_role.user),
-  perticipant_controller.approve_participant,
-);
-
-router.patch(
-  "/event/:event_id/:participant_id/reject",
-  check_auth(user_role.user),
-  perticipant_controller.reject_participant,
-);
+router
+  .route("/pending")
+  .get(
+    check_auth(user_role.user),
+    perticipant_controller.get_pending_participants,
+  );
+router
+  .route("/pending/:event_id")
+  .patch(
+    check_auth(user_role.user),
+    perticipant_controller.approve_participant,
+  );
 
 export const perticipant_routes = router;

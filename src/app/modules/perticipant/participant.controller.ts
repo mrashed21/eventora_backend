@@ -62,33 +62,19 @@ export const perticipant_controller = {
   }),
 
   approve_participant: catch_async(async (req, res) => {
-    const result = await participant_service.approve_participant(
-      req.params.event_id as string,
-      req.params.participant_id as string,
-      req.user.id,
-      req.body?.note,
-    );
+    const payload = {
+      replay_note: req.body?.replay_note,
+      event_id: req.params.event_id as string,
+      participant_id: req.body.participant_id as string,
+      user_id: req.user.id,
+      status: req.body.status,
+    };
+    const result = await participant_service.update(payload);
 
     send_response(res, {
       statusCode: status.OK,
       success: true,
       message: "Participant approved successfully",
-      data: result,
-    });
-  }),
-
-  reject_participant: catch_async(async (req, res) => {
-    const result = await participant_service.reject_participant(
-      req.params.event_id as string,
-      req.params.participant_id as string,
-      req.user.id,
-      req.body?.reason,
-    );
-
-    send_response(res, {
-      statusCode: status.OK,
-      success: true,
-      message: "Participant rejected successfully",
       data: result,
     });
   }),

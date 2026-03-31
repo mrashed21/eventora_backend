@@ -6,14 +6,9 @@ model EventParticipant {
   participation_status participation_status @default(pending)
   payment_status       payment_status       @default(not_required)
 
-  requested_at DateTime  @default(now())
-  approved_at  DateTime?
-  rejected_at  DateTime?
-  joined_at    DateTime?
-  cancelled_at DateTime?
+  requested_at DateTime @default(now())
 
-  approval_note    String?
-  rejection_reason String?
+  replay_note String?
 
   payment_id            String?
   stripe_session_id     String?

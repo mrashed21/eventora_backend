@@ -62,8 +62,6 @@ export const participant_service = {
           participation_status: isPrivate ? "pending" : "approved",
           payment_status: "not_required",
           requested_at: new Date(),
-          approved_at: !isPrivate ? new Date() : null,
-          joined_at: !isPrivate ? new Date() : null,
         },
       });
 
@@ -242,12 +240,8 @@ export const participant_service = {
     };
   },
 
-  approve_participant: async (
-    event_id: string,
-    participant_id: string,
-    user_id: string,
-    note?: string,
-  ) => {
+  update: async (payload: any) => {
+    const { event_id, participant_id, user_id, replay_note,status } = payload;
     const event = await prisma.event.findUnique({
       where: { id: event_id },
       select: {
@@ -292,74 +286,8 @@ export const participant_service = {
         },
       },
       data: {
-        participation_status: "approved",
-        approval_note: note,
-        approved_at: new Date(),
-        joined_at: new Date(),
-      },
-      include: {
-        user: true,
-        event: true,
-        payment: true,
-      },
-    });
-
-    return result;
-  },
-
-  reject_participant: async (
-    event_id: string,
-    participant_id: string,
-    user_id: string,
-    reason?: string,
-  ) => {
-    const event = await prisma.event.findUnique({
-      where: { id: event_id },
-      select: {
-        id: true,
-        userId: true,
-      },
-    });
-
-    if (!event) {
-      throw new api_error(status.NOT_FOUND, "Event not found");
-    }
-
-    if (event.userId !== user_id) {
-      throw new api_error(
-        status.FORBIDDEN,
-        "You are not allowed to reject participants for this event",
-      );
-    }
-
-    const participant = await prisma.eventParticipant.findUnique({
-      where: {
-        unique_event_participant: {
-          event_id,
-          participant_id,
-        },
-      },
-    });
-
-    if (!participant) {
-      throw new api_error(status.NOT_FOUND, "Participant not found");
-    }
-
-    if (participant.participation_status === "rejected") {
-      throw new api_error(status.BAD_REQUEST, "Participant already rejected");
-    }
-
-    const result = await prisma.eventParticipant.update({
-      where: {
-        unique_event_participant: {
-          event_id,
-          participant_id,
-        },
-      },
-      data: {
-        participation_status: "rejected",
-        rejection_reason: reason,
-        rejected_at: new Date(),
+        participation_status: status,
+        replay_note: replay_note,
       },
       include: {
         user: true,
