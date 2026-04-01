@@ -4,11 +4,11 @@ model Admin {
   admin_email    String     @unique
   profile_photo  String?
   contact_number String?
-  admin_role     admin_role @default(admin)
   is_deleted     Boolean    @default(false)
   created_at     DateTime   @default(now())
   updated_at     DateTime   @updatedAt
   deleted_at     DateTime?
+  admin_role     admin_role @default(admin)
   user_id        String     @unique
   user           User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
 

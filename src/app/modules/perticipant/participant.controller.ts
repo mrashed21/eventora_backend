@@ -23,26 +23,15 @@ export const perticipant_controller = {
   }),
 
   get_my_participations: catch_async(async (req, res) => {
-    const result = await participant_service.get_my_participations(req.user.id);
-
-    send_response(res, {
-      statusCode: status.OK,
-      success: true,
-      message: "My participations fetched successfully",
-      data: result,
-    });
-  }),
-
-  get_my_participation_status: catch_async(async (req, res) => {
-    const result = await participant_service.get_my_participation_status(
-      req.params.event_id as string,
+    const result = await participant_service.get_my_participations(
       req.user.id,
+      req.query,
     );
 
     send_response(res, {
       statusCode: status.OK,
       success: true,
-      message: "Participation status fetched successfully",
+      message: "My participations fetched successfully",
       data: result,
     });
   }),

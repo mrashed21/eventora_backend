@@ -131,48 +131,56 @@ export const participant_service = {
     };
   },
 
-  get_my_participations: async (user_id: string) => {
-    const result = await prisma.eventParticipant.findMany({
-      where: {
-        participant_id: user_id,
-      },
-      include: {
-        event: {
-          include: {
-            category: true,
-            organizer: true,
-          },
-        },
-        payment: true,
-      },
-      orderBy: {
-        created_at: "desc",
-      },
+  get_my_participations: async (user_id: string, query: any) => {
+    const { page, limit } = query;
+    const {
+      skip,
+      limit: take,
+      sortBy,
+      sortOrder,
+    } = calculatePagination({
+      page,
+      limit,
+      sortBy: query.sortBy,
+      sortOrder: query.sortOrder,
     });
 
-    return result;
-  },
-
-  get_my_participation_status: async (event_id: string, user_id: string) => {
-    const result = await prisma.eventParticipant.findUnique({
-      where: {
-        unique_event_participant: {
-          event_id,
+    const [data, total] = await Promise.all([
+      prisma.eventParticipant.findMany({
+        where: {
           participant_id: user_id,
         },
-      },
-      include: {
-        event: {
-          include: {
-            category: true,
-            organizer: true,
+        skip,
+        take,
+        include: {
+          event: {
+            include: {
+              category: true,
+              organizer: true,
+            },
           },
+          payment: true,
         },
-        payment: true,
-      },
-    });
+        orderBy: {
+          created_at: "desc",
+        },
+      }),
+      prisma.eventParticipant.count({
+        where: {
+          participant_id: user_id,
+        },
+      }),
+    ]);
 
-    return result;
+    return {
+      meta: {
+        page: Number(page) || 1,
+        limit: take,
+        total,
+        totalPage: Math.ceil(total / take),
+      },
+      data,
+    };
   },
 
   get_pending_participants: async (query: any, user_id: string) => {
@@ -241,7 +249,7 @@ export const participant_service = {
   },
 
   update: async (payload: any) => {
-    const { event_id, participant_id, user_id, replay_note,status } = payload;
+    const { event_id, participant_id, user_id, replay_note, status } = payload;
     const event = await prisma.event.findUnique({
       where: { id: event_id },
       select: {

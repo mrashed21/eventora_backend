@@ -14,12 +14,6 @@ router.get(
   perticipant_controller.get_my_participations,
 );
 
-router.get(
-  "/my/:event_id",
-  check_auth(user_role.user),
-  perticipant_controller.get_my_participation_status,
-);
-
 // organizer approve / reject
 router
   .route("/pending")

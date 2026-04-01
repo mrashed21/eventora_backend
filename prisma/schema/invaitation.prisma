@@ -1,20 +1,17 @@
 model Invitation {
-    id         String  @id @default(uuid())
-    email      String
-    event_id   String
-    user_id    String?
-    invited_by String? 
+  id           String            @id @default(uuid())
+  email        String
+  event_id     String
+  status       invitation_status @default(pending)
+  created_at   DateTime          @default(now())
+  updated_at   DateTime          @updatedAt
+  user_id      String?
+  invited_by   String?
+  responded_at DateTime?
+  event        Event             @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  user         User?             @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
-    status       invitation_status @default(pending)
-    responded_at DateTime?
-
-    created_at DateTime @default(now())
-    updated_at DateTime @updatedAt
-
-    event Event @relation(fields: [event_id], references: [id], onDelete: Cascade)
-    user  User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
-    @@index([event_id])
-    @@index([email])
-    @@index([user_id])
+  @@index([event_id])
+  @@index([email])
+  @@index([user_id])
 }

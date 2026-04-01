@@ -1,14 +1,13 @@
 model Review {
-    id        String   @id @default(cuid())
-    rating    Int
-    comment   String?
-    eventId   String
-    userId    String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String?
+  eventId   String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
-    user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@unique([eventId, userId])
+  @@unique([eventId, userId])
 }

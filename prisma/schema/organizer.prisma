@@ -10,9 +10,8 @@ model Organizer {
   user_address   String?
   user_email     String    @unique
   user_name      String
-
-  user   User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  events Event[] @relation("EventOrganizers")
+  events         Event[]   @relation("EventOrganizers")
+  user           User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([user_email], map: "idx_organizers_user_email")
   @@index([is_deleted], map: "idx_organizers_is_deleted")

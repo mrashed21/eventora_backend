@@ -1,25 +1,19 @@
 model EventParticipant {
-  id             String @id @default(uuid(7))
-  event_id       String
-  participant_id String
-
-  participation_status participation_status @default(pending)
-  payment_status       payment_status       @default(not_required)
-
-  requested_at DateTime @default(now())
-
-  replay_note String?
-
+  id                    String               @id @default(uuid(7))
+  event_id              String
+  participant_id        String
+  created_at            DateTime             @default(now())
+  participation_status  participation_status @default(pending)
   payment_id            String?
-  stripe_session_id     String?
+  payment_status        payment_status       @default(not_required)
+  requested_at          DateTime             @default(now())
   stripe_payment_intent String?
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  event   Event         @relation(fields: [event_id], references: [id], onDelete: Cascade)
-  user    User          @relation(fields: [participant_id], references: [id], onDelete: Cascade)
-  payment EventPayment? @relation(fields: [payment_id], references: [id], onDelete: SetNull)
+  stripe_session_id     String?
+  updated_at            DateTime             @updatedAt
+  replay_note           String?
+  event                 Event                @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  user                  User                 @relation(fields: [participant_id], references: [id], onDelete: Cascade)
+  payment               EventPayment?        @relation(fields: [payment_id], references: [id])
 
   @@unique([event_id, participant_id], name: "unique_event_participant")
   @@index([event_id], map: "idx_event_participant_event_id")
