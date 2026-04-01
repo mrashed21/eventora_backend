@@ -12,7 +12,7 @@ export const review_service = {
     const event = await prisma.event.findUnique({
       where: { id: eventId },
       include: {
-        participants: true, // assuming Event -> participants relation exists
+        participants: true,
       },
     });
 
@@ -30,7 +30,8 @@ export const review_service = {
 
     // user participated?
     const isParticipant = event.participants?.some(
-      (p: any) => p.userId === userId && p.status === "APPROVED",
+      (p: any) =>
+        p.participant_id === userId && p.participation_status === "approved",
     );
 
     if (!isParticipant) {
