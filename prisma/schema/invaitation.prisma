@@ -1,12 +1,20 @@
 model Invitation {
-    id         String            @id @default(uuid())
+    id         String  @id @default(uuid())
     email      String
     event_id   String
-    status     invitation_status @default(pending)
     user_id    String?
-    created_at DateTime          @default(now())
-    updated_at DateTime          @updatedAt
+    invited_by String? 
 
-    event Event @relation(fields: [event_id], references: [id])
+    status       invitation_status @default(pending)
+    responded_at DateTime?
+
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+
+    event Event @relation(fields: [event_id], references: [id], onDelete: Cascade)
     user  User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+    @@index([event_id])
+    @@index([email])
+    @@index([user_id])
 }

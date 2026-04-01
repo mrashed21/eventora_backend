@@ -41,12 +41,6 @@ enum category_type {
   private
 }
 
-enum invitation_status {
-  pending
-  accepted
-  rejected
-}
-
 enum participation_status {
   pending
   approved
@@ -65,4 +59,11 @@ enum payment_status {
 
 enum payment_provider {
   stripe
+}
+
+enum invitation_status {
+  pending
+  accepted
+  rejected
+  cancelled
 }

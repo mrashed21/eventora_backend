@@ -5,6 +5,6 @@ export const register_participant_schema = z.object({
 });
 
 export const approve_reject_participant_schema = z.object({
-  note: z.string().optional(),
+  reply_note: z.string().optional(),
   reason: z.string().optional(),
 });
