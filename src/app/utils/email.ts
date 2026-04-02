@@ -9,14 +9,23 @@ import api_error from "../error-helper/api-error";
 const transporter = nodemailder.createTransport({
   host: config.EMAIL_SENDER_SMTP_HOST,
   port: 587,
-  secure: false, // 587 এর জন্য অবশ্যই false
-  requireTLS: true, // STARTTLS force করবে
+  secure: false,
+  requireTLS: true,
   auth: {
     user: config.EMAIL_SENDER_SMTP_USER,
     pass: config.EMAIL_SENDER_SMT_PASS,
   },
-  family: 4, // IPv4 force
+  family: 4,
 } as SMTPTransport.Options);
+
+// এটা যোগ করুন
+transporter.verify((error, success) => {
+  if (error) {
+    console.log("SMTP Connection Failed:", error);
+  } else {
+    console.log("SMTP Server Ready:", success);
+  }
+});
 // dn7q0rd8l1xlzdhi3nr4685cg
 
 interface SendEmailOptions {
