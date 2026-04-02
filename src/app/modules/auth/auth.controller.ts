@@ -203,16 +203,18 @@ export const auth_controller = {
 
   // /api/v1/auth/login/google?redirect=/profile
   google_login: catch_async((req: Request, res: Response) => {
-    const redirectPath = req.query.redirect || "/";
+    const redirectPath = (req.query.redirect as string) || "/";
 
-    const encoded_redirect_path = encodeURIComponent(redirectPath as string);
+    const isValidRedirectPath =
+      redirectPath.startsWith("/") && !redirectPath.startsWith("//");
 
-    const callback_url = `${config.BETTER_AUTH_URL}/api/v1/auth/google/success?redirect=${encoded_redirect_path}`;
+    const finalRedirectPath = isValidRedirectPath ? redirectPath : "/";
 
-    res.render("googleRedirect", {
-      callbackURL: callback_url,
-      betterAuthUrl: config.BETTER_AUTH_URL,
-    });
+    const callbackURL = `${config.FRONTEND_URL}/auth/callback?redirect=${encodeURIComponent(finalRedirectPath)}`;
+
+    const googleAuthURL = `${config.BETTER_AUTH_URL}/api/auth/sign-in/social?provider=google&callbackURL=${encodeURIComponent(callbackURL)}`;
+
+    res.redirect(googleAuthURL);
   }),
 
   // ! google login success
@@ -255,6 +257,30 @@ export const auth_controller = {
     res.redirect(`${config.FRONTEND_URL}${finalRedirectPath}`);
   }),
 
+  google_exchange: catch_async(async (req: Request, res: Response) => {
+    const sessionToken = req.cookies["better-auth.session_token"];
+    const session = await auth.api.getSession({
+      headers: {
+        Cookie: `better-auth.session_token=${sessionToken}`,
+      },
+    });
+
+    if (!session || !session.user) {
+      throw new api_error(status.UNAUTHORIZED, "No active session found");
+    }
+
+    const result = await auth_service.google_login(session);
+
+    const { access_token, refresh_token } = result;
+
+    token_utils.set_cookie.access(res, access_token);
+    token_utils.set_cookie.refresh(res, refresh_token);
+
+    res.status(200).json({
+      success: true,
+      message: "Google login successful",
+    });
+  }),
   // ! handle OAuth error
   handle_oAuth_error: catch_async((req: Request, res: Response) => {
     const error = (req.query.error as string) || "oauth_failed";

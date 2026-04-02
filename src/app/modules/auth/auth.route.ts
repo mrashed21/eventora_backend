@@ -40,7 +40,8 @@ router.route("/reset_password").post(auth_controller.reset_password);
 router.route("/resend_otp").post(auth_controller.resend_otp);
 router.route("/login/google").get(auth_controller.google_login);
 
-router.route("/google/success").get(auth_controller.google_login_success);
+// router.route("/google/success").get(auth_controller.google_login_success);
+router.route("/google/exchange").post(auth_controller.google_exchange);
 
 router.route("/oauth/error").get(auth_controller.handle_oAuth_error);
 
