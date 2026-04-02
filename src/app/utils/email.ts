@@ -1,20 +1,22 @@
 import ejs from "ejs";
 import status from "http-status";
 import nodemailder from "nodemailer";
+import SMTPTransport from "nodemailer/lib/smtp-transport";
 import path from "path";
 import { config } from "../config/config";
 import api_error from "../error-helper/api-error";
 
+
 const transporter = nodemailder.createTransport({
   host: config.EMAIL_SENDER_SMTP_HOST,
+  port: 465,
   secure: true,
   auth: {
     user: config.EMAIL_SENDER_SMTP_USER,
     pass: config.EMAIL_SENDER_SMT_PASS,
   },
-  port: Number(config.EMAIL_SENDER_SMTP_PORT),
-});
-
+  family: 4,
+} as SMTPTransport.Options)
 // dn7q0rd8l1xlzdhi3nr4685cg
 
 interface SendEmailOptions {
