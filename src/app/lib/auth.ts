@@ -144,7 +144,10 @@ export const auth = betterAuth({
   },
 
   trustedOrigins: [
-    config.BETTER_AUTH_URL! || "http://localhost:5000" || config.FRONTEND_URL,
+    "https://event-ora-frontend.vercel.app",
+    "http://localhost:3000",
+    "https://eventora-backend.up.railway.app",
+    "http://localhost:5000",
   ],
   redirectURLs: {
     signIn: `${config.BETTER_AUTH_URL}/api/v1/auth/google/success`,
