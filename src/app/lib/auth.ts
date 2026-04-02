@@ -143,14 +143,16 @@ export const auth = betterAuth({
     },
   },
 
-  trustedOrigins: [config.BETTER_AUTH_URL! || "http://localhost:5000"],
+  trustedOrigins: [
+    config.BETTER_AUTH_URL! || "http://localhost:5000" || config.FRONTEND_URL,
+  ],
   redirectURLs: {
     signIn: `${config.BETTER_AUTH_URL}/api/v1/auth/google/success`,
   },
 
   advanced: {
     // disableCSRFCheck: true,
-    useSecureCookies: false,
+    useSecureCookies: true,
     cookies: {
       state: {
         attributes: {

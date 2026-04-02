@@ -48,6 +48,7 @@ export const token_utils = {
     betterAuth: (res: Response, token: string) => {
       cookie_utils.set(res, "better-auth.session_token", token, {
         httpOnly: true,
+        secure: true,
         // secure: false,
         sameSite: "none",
         // sameSite: "lax",
