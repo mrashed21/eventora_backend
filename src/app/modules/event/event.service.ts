@@ -603,4 +603,57 @@ export const event_service = {
       joined_participants: participants.map((item) => item.user),
     }));
   },
+
+  search_events: async (query: any) => {
+    const { search_term } = query;
+
+    if (!search_term) {
+      return [];
+    }
+
+    const result = await prisma.event.findMany({
+      where: {
+        OR: [
+          {
+            event_title: {
+              contains: search_term,
+              mode: "insensitive",
+            },
+          },
+          {
+            event_venue: {
+              contains: search_term,
+              mode: "insensitive",
+            },
+          },
+          {
+            category: {
+              is: {
+                category_title: {
+                  contains: search_term,
+                  mode: "insensitive",
+                },
+              },
+            },
+          },
+        ],
+        event_status: "active",
+      },
+
+      select: {
+        id: true,
+        event_title: true,
+        event_image: true,
+        event_date: true,
+        event_venue: true,
+      },
+
+      take: 8,
+      orderBy: {
+        event_date: "asc",
+      },
+    });
+
+    return result;
+  },
 };

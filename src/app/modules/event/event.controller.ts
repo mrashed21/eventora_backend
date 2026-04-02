@@ -145,4 +145,16 @@ export const event_controller = {
       data: result,
     });
   }),
+
+  // search events
+  search_events: catch_async(async (req: Request, res: Response) => {
+    const result = await event_service.search_events(req.query);
+
+    send_response(res, {
+      statusCode: status.OK,
+      success: true,
+      message: "Search results fetched successfully",
+      data: result,
+    });
+  }),
 };

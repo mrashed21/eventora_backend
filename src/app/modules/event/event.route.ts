@@ -13,6 +13,7 @@ router.route("/featured").get(event_controller.get_featured);
 
 // ! upcoming events
 router.route("/upcoming").get(event_controller.get_upcoming);
+router.route("/search").get(event_controller.search_events);
 
 // ! public
 router
