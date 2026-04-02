@@ -6,6 +6,7 @@ import { event_routes } from "../modules/event/event.route";
 import { invitation_routes } from "../modules/invaitaion/invaitaion.route";
 import { perticipant_routes } from "../modules/perticipant/perticipant.route";
 import { review_routes } from "../modules/review/review.route";
+import { stats_routes } from "../modules/stats/stats.route";
 import { user_routes } from "../modules/user/user.route";
 
 const router = Router();
@@ -42,6 +43,10 @@ const moduleRoutes = [
   {
     path: "/review",
     route: review_routes,
+  },
+  {
+    path: "/stats",
+    route: stats_routes,
   },
 ];
 

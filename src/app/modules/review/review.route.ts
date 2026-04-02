@@ -40,16 +40,12 @@ router.get(
   review_controller.get_owner_all_event_reviews,
 );
 
-router.get(
-  "/owner/event/:eventId",
-  check_auth(user_role.admin),
-  review_controller.get_owner_event_reviews,
-);
+
 
 // ADMIN
 router.get(
   "/admin/all",
-  check_auth(user_role.admin),
+  check_auth(user_role.admin , user_role.super_admin),
   review_controller.get_all_reviews_admin,
 );
 

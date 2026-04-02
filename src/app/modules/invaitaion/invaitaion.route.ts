@@ -31,7 +31,7 @@ router.get(
 
 // receiver accept / reject
 router.patch(
-  "/:id/",
+  "/:id",
   check_auth(user_role.user),
   invaitation_controller.respond,
 );

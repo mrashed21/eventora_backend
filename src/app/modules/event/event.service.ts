@@ -305,6 +305,11 @@ export const event_service = {
         user: true,
         organizer: true,
         category: true,
+        reviews: {
+          include: {
+            user: true,
+          },
+        },
         participants: {
           include: {
             user: true,
@@ -322,10 +327,22 @@ export const event_service = {
       throw new api_error(status.NOT_FOUND, "Event not found");
     }
 
+    // ===== Review Stats =====
+    const totalReviews = result.reviews.length;
+
+    const averageRating =
+      totalReviews > 0
+        ? result.reviews.reduce((acc, r) => acc + r.rating, 0) / totalReviews
+        : 0;
+
     return {
       ...result,
+
       total_joined: result.participants.length,
       joined_participants: result.participants.map((item) => item.user),
+
+      total_reviews: totalReviews,
+      average_rating: Number(averageRating.toFixed(1)),
     };
   },
 
