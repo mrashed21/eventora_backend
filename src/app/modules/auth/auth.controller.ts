@@ -212,7 +212,7 @@ export const auth_controller = {
 
     const callbackURL = `${config.FRONTEND_URL}/auth/callback?redirect=${encodeURIComponent(finalRedirectPath)}`;
 
-    const googleAuthURL = `${config.BETTER_AUTH_URL}/api/auth/sign-in/social?provider=google&callbackURL=${encodeURIComponent(callbackURL)}`;
+    const googleAuthURL = `${config.BETTER_AUTH_URL}/api/v1/auth/sign-in/social?provider=google&callbackURL=${encodeURIComponent(callbackURL)}`;
 
     res.redirect(googleAuthURL);
   }),
