@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>New Participant Joined</title>
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background-color: #f1f5f9;
+      font-family: Arial, Helvetica, sans-serif;
+    "
+  >
+    <table
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      style="padding: 40px 16px"
+    >
+      <tr>
+        <td align="center">
+          <table
+            width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            style="max-width: 520px"
+          >
+            <tr>
+              <td
+                align="center"
+                style="
+                  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+                  color: #ffffff;
+                  padding: 40px 30px;
+                  border-radius: 18px 18px 0 0;
+                "
+              >
+                <div style="font-size: 42px">👤</div>
+                <h1 style="margin: 10px 0 0; font-size: 26px">
+                  New Participant Joined
+                </h1>
+              </td>
+            </tr>
+
+            <tr>
+              <td
+                style="
+                  background: #ffffff;
+                  padding: 32px 28px;
+                  border-radius: 0 0 18px 18px;
+                  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+                "
+              >
+                <p style="font-size: 16px; color: #0f172a; margin: 0 0 16px">
+                  Hello <strong><%= organizerName %></strong>,
+                </p>
+
+                <p
+                  style="
+                    font-size: 15px;
+                    color: #475569;
+                    line-height: 1.8;
+                    margin: 0 0 24px;
+                  "
+                >
+                  A participant has successfully completed payment and joined
+                  your event.
+                </p>
+
+                <table
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  style="
+                    border: 1px solid #e2e8f0;
+                    border-radius: 14px;
+                    overflow: hidden;
+                    margin-bottom: 24px;
+                  "
+                >
+                  <tr>
+                    <td
+                      style="
+                        background: #f8fafc;
+                        padding: 16px 18px;
+                        font-size: 14px;
+                        color: #334155;
+                        line-height: 1.9;
+                      "
+                    >
+                      <strong>🎫 Event:</strong> <%= eventName %><br />
+                      <strong>👤 Participant:</strong> <%= participantName %><br />
+                      <strong>📧 Email:</strong> <%= participantEmail %><br />
+                      <strong>💳 Paid Amount:</strong> <%= amountPaid %> BDT<br />
+                      <strong>🟢 Status:</strong> <%= participationStatus %><br />
+                    </td>
+                  </tr>
+                </table>
+
+                <div style="text-align: center">
+                  <a
+                    href="<%= manageLink %>"
+                    style="
+                      display: inline-block;
+                      background: #2563eb;
+                      color: #ffffff;
+                      text-decoration: none;
+                      padding: 14px 24px;
+                      border-radius: 12px;
+                      font-size: 15px;
+                      font-weight: 600;
+                    "
+                  >
+                    Manage Participants
+                  </a>
+                </div>
+
+                <div
+                  style="
+                    border-top: 1px solid #e2e8f0;
+                    margin-top: 24px;
+                    padding-top: 18px;
+                    font-size: 12px;
+                    color: #94a3b8;
+                    text-align: center;
+                  "
+                >
+                  This is an automated email. Please do not reply.
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

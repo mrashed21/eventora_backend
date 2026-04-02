@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>You're Invited</title>
+  </head>
+
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background-color: #f1f5f9;
+      font-family: Arial, Helvetica, sans-serif;
+    "
+  >
+    <table
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      style="padding: 40px 16px"
+    >
+      <tr>
+        <td align="center">
+          <!-- Container -->
+          <table
+            width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            style="max-width: 520px"
+          >
+            <!-- HEADER -->
+            <tr>
+              <td
+                align="center"
+                style="
+                  background: linear-gradient(135deg, #10b981, #059669);
+                  padding: 42px 30px;
+                  border-radius: 18px 18px 0 0;
+                  color: #ffffff;
+                "
+              >
+                <div style="font-size: 44px">🎉</div>
+
+                <h1 style="margin: 12px 0 0; font-size: 26px; font-weight: 700">
+                  You're Invited!
+                </h1>
+
+                <p style="margin: 10px 0 0; font-size: 14px; color: #d1fae5">
+                  You have received an invitation to join an event.
+                </p>
+              </td>
+            </tr>
+
+            <!-- CARD BODY -->
+            <tr>
+              <td
+                style="
+                  background: #ffffff;
+                  padding: 32px 28px;
+                  border-radius: 0 0 18px 18px;
+                  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+                "
+              >
+                <!-- Greeting -->
+                <table width="100%">
+                  <tr>
+                    <td
+                      style="
+                        font-size: 16px;
+                        color: #0f172a;
+                        padding-bottom: 14px;
+                      "
+                    >
+                      Hello,
+                    </td>
+                  </tr>
+
+                  <!-- Message -->
+                  <tr>
+                    <td
+                      style="
+                        font-size: 15px;
+                        color: #475569;
+                        line-height: 1.8;
+                        padding-bottom: 24px;
+                      "
+                    >
+                      You have been invited to join the event
+                      <strong style="color: #0f172a"> <%= eventName %> </strong
+                      >. Don’t miss this opportunity to participate and connect!
+                    </td>
+                  </tr>
+
+                  <!-- EVENT CARD -->
+                  <tr>
+                    <td style="padding-bottom: 24px">
+                      <table
+                        width="100%"
+                        cellpadding="0"
+                        cellspacing="0"
+                        style="
+                          border: 1px solid #e2e8f0;
+                          border-radius: 14px;
+                          overflow: hidden;
+                        "
+                      >
+                        <tr>
+                          <td
+                            style="
+                              background: #f8fafc;
+                              padding: 16px 18px;
+                              font-size: 14px;
+                              color: #334155;
+                              line-height: 1.8;
+                            "
+                          >
+                            <strong>📅 Date:</strong>
+                            <%= eventDate %> <br />
+
+                            <strong>📍 Location:</strong>
+                            <%= eventLocation %> <br />
+
+                            <strong>💰 Registration Fee:</strong>
+                            <%= eventFee ? eventFee + " BDT" : "Free" %>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <!-- CTA BUTTON -->
+                  <tr>
+                    <td align="center" style="padding-bottom: 26px">
+                      <a
+                        href="<%= inviteLink %>"
+                        style="
+                          display: inline-block;
+                          background: #10b981;
+                          color: #ffffff;
+                          text-decoration: none;
+                          padding: 14px 26px;
+                          border-radius: 12px;
+                          font-size: 15px;
+                          font-weight: 600;
+                          box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+                        "
+                      >
+                        Accept Invitation
+                      </a>
+                    </td>
+                  </tr>
+
+                  <!-- Secondary Note -->
+                  <tr>
+                    <td
+                      style="
+                        font-size: 14px;
+                        color: #64748b;
+                        line-height: 1.8;
+                        padding-bottom: 20px;
+                        text-align: center;
+                      "
+                    >
+                      Or copy and paste this link into your browser:
+                      <br />
+                      <span style="color: #2563eb"> <%= inviteLink %> </span>
+                    </td>
+                  </tr>
+
+                  <!-- Warning -->
+                  <tr>
+                    <td style="padding-bottom: 20px">
+                      <table
+                        width="100%"
+                        cellpadding="0"
+                        cellspacing="0"
+                        style="
+                          background: #fff7ed;
+                          border: 1px solid #fed7aa;
+                          border-radius: 12px;
+                        "
+                      >
+                        <tr>
+                          <td
+                            style="
+                              padding: 14px 16px;
+                              font-size: 13px;
+                              color: #9a3412;
+                              line-height: 1.7;
+                            "
+                          >
+                            ⚠️ This invitation was sent to
+                            <strong><%= email %></strong>. If you were not
+                            expecting this, you can safely ignore this email.
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <!-- Footer -->
+                  <tr>
+                    <td
+                      style="
+                        border-top: 1px solid #e2e8f0;
+                        padding-top: 18px;
+                        font-size: 12px;
+                        color: #94a3b8;
+                        text-align: center;
+                        line-height: 1.7;
+                      "
+                    >
+                      This is an automated email. Please do not reply.
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- COPYRIGHT -->
+            <tr>
+              <td
+                align="center"
+                style="padding-top: 16px; font-size: 12px; color: #94a3b8"
+              >
+                © <%= new Date().getFullYear() %> Your Company
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

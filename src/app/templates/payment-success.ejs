@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Successful</title>
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background-color: #f1f5f9;
+      font-family: Arial, Helvetica, sans-serif;
+    "
+  >
+    <table
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      style="padding: 40px 16px"
+    >
+      <tr>
+        <td align="center">
+          <table
+            width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            style="max-width: 520px"
+          >
+            <!-- Header -->
+            <tr>
+              <td
+                align="center"
+                style="
+                  background: linear-gradient(135deg, #10b981, #059669);
+                  color: #ffffff;
+                  padding: 40px 30px;
+                  border-radius: 18px 18px 0 0;
+                "
+              >
+                <div style="font-size: 42px">✅</div>
+                <h1 style="margin: 10px 0 0; font-size: 26px">
+                  Payment Successful
+                </h1>
+                <p style="margin: 10px 0 0; font-size: 14px; color: #d1fae5">
+                  Your event registration has been confirmed.
+                </p>
+              </td>
+            </tr>
+
+            <!-- Body -->
+            <tr>
+              <td
+                style="
+                  background: #ffffff;
+                  padding: 32px 28px;
+                  border-radius: 0 0 18px 18px;
+                  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+                "
+              >
+                <p style="font-size: 16px; color: #0f172a; margin: 0 0 16px">
+                  Hello <strong><%= name %></strong>,
+                </p>
+
+                <p
+                  style="
+                    font-size: 15px;
+                    color: #475569;
+                    line-height: 1.8;
+                    margin: 0 0 24px;
+                  "
+                >
+                  We’ve successfully received your payment for the event
+                  <strong style="color: #0f172a"><%= eventName %></strong>.
+                </p>
+
+                <table
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  style="
+                    border: 1px solid #e2e8f0;
+                    border-radius: 14px;
+                    overflow: hidden;
+                    margin-bottom: 24px;
+                  "
+                >
+                  <tr>
+                    <td
+                      style="
+                        background: #f8fafc;
+                        padding: 16px 18px;
+                        font-size: 14px;
+                        color: #334155;
+                        line-height: 1.9;
+                      "
+                    >
+                      <strong>🎫 Event:</strong> <%= eventName %><br />
+                      <strong>📅 Date:</strong> <%= eventDate %><br />
+                      <strong>📍 Location:</strong> <%= eventLocation %><br />
+                      <strong>💳 Amount Paid:</strong> <%= eventFee %> BDT<br />
+                      <strong>📌 Payment Status:</strong> <%= paymentStatus
+                      %><br />
+                      <strong>🟢 Participation Status:</strong> <%=
+                      participationStatus %><br />
+                    </td>
+                  </tr>
+                </table>
+
+                <div style="text-align: center; padding-bottom: 24px">
+                  <a
+                    href="<%= dashboardLink %>"
+                    style="
+                      display: inline-block;
+                      background: #10b981;
+                      color: #ffffff;
+                      text-decoration: none;
+                      padding: 14px 24px;
+                      border-radius: 12px;
+                      font-size: 15px;
+                      font-weight: 600;
+                    "
+                  >
+                    View My Events
+                  </a>
+                </div>
+
+                <p
+                  style="
+                    font-size: 14px;
+                    color: #64748b;
+                    line-height: 1.8;
+                    text-align: center;
+                  "
+                >
+                  You can view your event participation details anytime from
+                  your dashboard.
+                </p>
+
+                <div
+                  style="
+                    border-top: 1px solid #e2e8f0;
+                    margin-top: 24px;
+                    padding-top: 18px;
+                    font-size: 12px;
+                    color: #94a3b8;
+                    text-align: center;
+                  "
+                >
+                  This is an automated email. Please do not reply.
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

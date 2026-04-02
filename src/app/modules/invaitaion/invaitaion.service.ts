@@ -89,14 +89,14 @@ export const invaitation_service = {
 
     await sendEmail({
       to: email,
-      subject: "You're invited to an event",
+      subject: `You're invited to ${event.event_title}`,
       templateName: "invaitaion",
       templateData: {
         eventName: event.event_title,
         eventDate: event.event_date,
         eventLocation: event.event_venue,
         eventFee: event.registration_fee,
-        inviteLink: `${config.FRONTEND_URL}/invitations`,
+        inviteLink: `${config.FRONTEND_URL}/user/invitation-request`,
         email,
       },
     });

@@ -3,7 +3,7 @@ import status from "http-status";
 import nodemailder from "nodemailer";
 import path from "path";
 import { config } from "../config/config";
-import AppError from "../error-helper/api-error";
+import api_error from "../error-helper/api-error";
 
 const transporter = nodemailder.createTransport({
   host: config.EMAIL_SENDER_SMTP_HOST,
@@ -59,6 +59,6 @@ export const sendEmail = async ({
     console.log(`Email sent to ${to} : ${info.messageId}`);
   } catch (error: any) {
     console.log("Email Sending Error", error.message);
-    throw new AppError(status.INTERNAL_SERVER_ERROR, "Failed to send email");
+    throw new api_error(status.INTERNAL_SERVER_ERROR, "Failed to send email");
   }
 };

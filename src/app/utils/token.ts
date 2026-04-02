@@ -24,10 +24,10 @@ export const token_utils = {
     access: (res: Response, token: string) => {
       cookie_utils.set(res, "access_token", token, {
         httpOnly: true,
-        // secure: true,
-        secure: false,
-        // sameSite: "none",
-        sameSite: "lax",
+        secure: true,
+        // secure: false,
+        sameSite: "none",
+        // sameSite: "lax",
         path: "/",
         maxAge: 1000 * 60 * 60 * 24, // 1 day
       });
@@ -36,10 +36,10 @@ export const token_utils = {
     refresh: (res: Response, token: string) => {
       cookie_utils.set(res, "refresh_token", token, {
         httpOnly: true,
-        // secure: true,
-        secure: false,
-        // sameSite: "none",
-        sameSite: "lax",
+        secure: true,
+        // secure: false,
+        sameSite: "none",
+        // sameSite: "lax",
         path: "/",
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       });
@@ -48,10 +48,9 @@ export const token_utils = {
     betterAuth: (res: Response, token: string) => {
       cookie_utils.set(res, "better-auth.session_token", token, {
         httpOnly: true,
-        // secure: true,
-        secure: false,
-        // sameSite: "none",
-        sameSite: "lax",
+        // secure: false,
+        sameSite: "none",
+        // sameSite: "lax",
         path: "/",
         maxAge: 1000 * 60 * 60 * 24,
       });
